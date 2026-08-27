@@ -67,17 +67,11 @@
     padding-top: 4px;
 }
 
-/* Lista de responsáveis com scroll próprio quando houver muitos nomes. */
-.label-filters-owners {
-    max-height: 220px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding-right: 6px;
-}
-
 @media (min-width: 1200px) {
+    /* Ocupa toda a altura da coluna; o scroll acontece na lista de grupos. */
     .label-filters {
         height: 100%;
+        align-self: stretch;
         overflow: hidden;
     }
 

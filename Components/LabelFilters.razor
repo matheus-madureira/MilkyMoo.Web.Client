@@ -28,7 +28,7 @@
     </div>
 
     <div id="label-filters-groups" class="label-filters-groups @(_isOpen ? "is-open" : string.Empty)">
-        <FilterGroup Title="Estado da embalagem">
+        <FilterGroup Title="Estado Atual">
             <FilterOption Text="Todas"
                           Count="Labels.Count"
                           IsChecked="State.States.Count == 0"
@@ -45,7 +45,7 @@
                           OnToggle="() => TogglePackageState(PackageState.Closed)" />
         </FilterGroup>
 
-        <FilterGroup Title="Vencimentos">
+        <FilterGroup Title="Vencimentos" Expanded="false">
             <FilterOption Text="Todos"
                           IsChecked="State.Expiration == ExpirationOrder.None"
                           OnToggle="() => SetExpiration(ExpirationOrder.None)" />
@@ -59,22 +59,20 @@
                           OnToggle="() => SetExpiration(ExpirationOrder.Longest)" />
         </FilterGroup>
 
-        <FilterGroup Title="Responsável">
-            <div class="label-filters-owners">
-                <FilterOption Text="Todos"
-                              Count="Labels.Count"
-                              IsChecked="State.Owners.Count == 0"
-                              OnToggle="ClearOwners" />
+        <FilterGroup Title="Responsável" Expanded="false">
+            <FilterOption Text="Todos"
+                          Count="Labels.Count"
+                          IsChecked="State.Owners.Count == 0"
+                          OnToggle="ClearOwners" />
 
-                @foreach (string owner in Owners)
-                {
-                    <FilterOption @key="owner"
-                                  Text="@owner"
-                                  Count="CountByOwner(owner)"
-                                  IsChecked="State.Owners.Contains(owner)"
-                                  OnToggle="() => ToggleOwner(owner)" />
-                }
-            </div>
+            @foreach (string owner in Owners)
+            {
+                <FilterOption @key="owner"
+                              Text="@owner"
+                              Count="CountByOwner(owner)"
+                              IsChecked="State.Owners.Contains(owner)"
+                              OnToggle="() => ToggleOwner(owner)" />
+            }
         </FilterGroup>
     </div>
 </aside>
@@ -82,7 +80,7 @@
 @code {
     private bool _isOpen;
 
-    /// <summary>Estado da embalagem usado no filtro.</summary>
+    /// <summary>Estado atual da embalagem usado no filtro.</summary>
     public enum PackageState
     {
         Open,

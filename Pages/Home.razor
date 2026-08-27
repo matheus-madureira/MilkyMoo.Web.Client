@@ -1,0 +1,8 @@
+@page "/"
+@inject NavigationManager Navigation
+
+@code {
+    /// <summary>A raiz não tem conteúdo próprio: encaminha para a tela de etiquetas.</summary>
+    protected override void OnInitialized() =>
+        Navigation.NavigateTo("etiquetas", replace: true);
+}

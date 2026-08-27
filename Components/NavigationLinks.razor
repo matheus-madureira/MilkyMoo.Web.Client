@@ -1,4 +1,4 @@
-<nav class="navigation-links">
+﻿<nav class="navigation-links">
     <img src="/images/logo.webp"
          alt="Logo da MilkyMoo"
          class="navigation-logo" />
@@ -23,9 +23,9 @@
     /// <summary>Navegação padrão da aplicação, compartilhada com o menu mobile.</summary>
     public static readonly IReadOnlyList<NavigationLink> DefaultLinks =
     [
-        new("Estoque", "", "bi bi-plus-square-fill-nav-menu", NavLinkMatch.All),
+        new("Etiquetas", "etiquetas", "bi bi-list-nested-nav-menu"),
         new("Produtos", "produtos", "bi bi-list-nested-nav-menu"),
-        new("Etiquetas", "etiquetas", "bi bi-list-nested-nav-menu")
+        new("Estoque", "estoque", "bi bi-plus-square-fill-nav-menu")
     ];
 
     /// <summary>Itens exibidos no menu. Substitua para customizar a navegação.</summary>

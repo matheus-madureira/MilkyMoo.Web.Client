@@ -1,4 +1,4 @@
-<article class="etiqueta-card">
+﻿<article class="etiqueta-card">
     <div class="etiqueta-owner d-flex align-items-center">
         <svg xmlns="http://www.w3.org/2000/svg"
              width="32"
@@ -24,6 +24,20 @@
         <span class="etiqueta-date">Aberto em: @Etiqueta.AbertoEm</span>
         <span class="etiqueta-date">Vencimento em: @Etiqueta.VencimentoEm</span>
     </div>
+
+    <div class="etiqueta-actions">
+        <button type="button"
+                class="etiqueta-action btn btn-lg d-flex align-items-center justify-content-center"
+                @onclick="OnDetalhes">
+            Detalhes
+        </button>
+
+        <button type="button"
+                class="etiqueta-action btn btn-lg d-flex align-items-center justify-content-center"
+                @onclick="OnImprimir">
+            Imprimir
+        </button>
+    </div>
 </article>
 
 @code {
@@ -41,4 +55,12 @@
     /// <summary>Etiqueta exibida no card.</summary>
     [Parameter, EditorRequired]
     public required EtiquetaImpressa Etiqueta { get; set; }
+
+    /// <summary>Disparado quando o usuário abre os detalhes da etiqueta.</summary>
+    [Parameter]
+    public EventCallback OnDetalhes { get; set; }
+
+    /// <summary>Disparado quando o usuário solicita a impressão da etiqueta.</summary>
+    [Parameter]
+    public EventCallback OnImprimir { get; set; }
 }

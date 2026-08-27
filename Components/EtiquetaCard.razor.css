@@ -103,6 +103,38 @@
     transition: color 0.25s ease;
 }
 
+/* Mobile e tablet empilham as ações; o desktop as coloca lado a lado. */
+.etiqueta-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding-top: 16px;
+}
+
+.etiqueta-action {
+    background-color: #f5c1cf;
+    height: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.6rem;
+    color: #000000;
+    border-radius: 70px;
+    padding: 12px 16px;
+    white-space: nowrap;
+}
+
+.etiqueta-action:hover {
+    background-color: #FFF5F7;
+    color: #E993A7;
+    cursor: pointer;
+}
+
+@media (min-width: 1280px) {
+    .etiqueta-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
 .etiqueta-card:hover .etiqueta-title {
     color: #f5c1cf;
 }

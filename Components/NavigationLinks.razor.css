@@ -1,4 +1,7 @@
 .navigation-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     height: 60px;
     padding: 0px 80px 0px 240px;
@@ -56,4 +59,10 @@
 
 .navigation-links ::deep .nav-link.active::after {
     background-color: #E993A7;
+}
+
+@media (max-width: 47.99rem) {
+    .navigation-links {
+        display: none;
+    }
 }

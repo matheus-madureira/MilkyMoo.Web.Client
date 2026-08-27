@@ -1,4 +1,4 @@
-<nav class="navigation-links d-flex justify-content-center align-items-center">
+<nav class="navigation-links">
     <img src="/images/logo.webp"
          alt="Logo da MilkyMoo"
          class="navigation-logo" />
@@ -20,12 +20,15 @@
         string Icon, 
         NavLinkMatch Match = NavLinkMatch.Prefix);
 
-    /// <summary>Itens exibidos no menu. Substitua para customizar a navegação.</summary>
-    [Parameter]
-    public IReadOnlyList<NavigationLink> Links { get; set; } =
+    /// <summary>Navegação padrão da aplicação, compartilhada com o menu mobile.</summary>
+    public static readonly IReadOnlyList<NavigationLink> DefaultLinks =
     [
         new("Estoque", "", "bi bi-plus-square-fill-nav-menu", NavLinkMatch.All),
         new("Produtos", "produtos", "bi bi-list-nested-nav-menu"),
         new("Etiquetas", "etiquetas", "bi bi-list-nested-nav-menu")
     ];
+
+    /// <summary>Itens exibidos no menu. Substitua para customizar a navegação.</summary>
+    [Parameter]
+    public IReadOnlyList<NavigationLink> Links { get; set; } = DefaultLinks;
 }

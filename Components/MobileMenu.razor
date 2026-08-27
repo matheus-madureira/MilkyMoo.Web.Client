@@ -1,0 +1,114 @@
+@implements IDisposable
+@inject NavigationManager Navigation
+
+<button type="button"
+        class="mobile-menu-toggle btn"
+        title="Abrir menu"
+        aria-label="Abrir menu"
+        aria-controls="mobile-menu-drawer"
+        aria-expanded="@(_isOpen ? "true" : "false")"
+        @onclick="Open">
+    <svg xmlns="http://www.w3.org/2000/svg"
+         width="24"
+         height="24"
+         viewBox="0 0 24 24"
+         fill="none"
+         stroke="currentColor"
+         stroke-width="3"
+         stroke-linecap="round"
+         stroke-linejoin="round"
+         class="lucide lucide-text-align-start-icon lucide-text-align-start"
+         aria-hidden="true">
+        <path d="M21 5H3" />
+        <path d="M15 12H3" />
+        <path d="M17 19H3" />
+    </svg>
+</button>
+
+<div class="mobile-menu-overlay @OpenClass" aria-hidden="true" @onclick="Close"></div>
+
+<aside id="mobile-menu-drawer"
+       class="mobile-menu-drawer @OpenClass"
+       aria-label="Menu de navegação"
+       aria-hidden="@(_isOpen ? "false" : "true")">
+    <div class="mobile-menu-header d-flex align-items-center justify-content-between">
+        <img src="/images/logo.webp"
+             alt="Logo da MilkyMoo"
+             class="mobile-menu-logo" />
+
+        <button type="button"
+                class="mobile-menu-close btn d-flex align-items-center justify-content-center"
+                title="Fechar menu"
+                aria-label="Fechar menu"
+                @onclick="Close">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="24"
+                 height="24"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="3"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 class="lucide lucide-x-icon lucide-x"
+                 aria-hidden="true">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+            </svg>
+        </button>
+    </div>
+
+    <nav class="mobile-menu-nav d-flex flex-column" @onclick="Close">
+        @foreach (NavigationLinks.NavigationLink link in Links)
+        {
+            <NavLink class="mobile-nav-link d-flex align-items-center" href="@link.Href" Match="@link.Match">
+                <span class="@link.Icon" aria-hidden="true"></span>
+                @link.Text
+            </NavLink>
+        }
+    </nav>
+
+    <div class="mobile-menu-footer">
+        <BranchLocation BranchName="@BranchName" />
+        <LoggedUser UserName="@UserName" />
+    </div>
+</aside>
+
+@code {
+    private bool _isOpen;
+
+    private string OpenClass => _isOpen ? "is-open" : string.Empty;
+
+    /// <summary>Itens exibidos no menu lateral. Espelha a navegação principal.</summary>
+    [Parameter]
+    public IReadOnlyList<NavigationLinks.NavigationLink> Links { get; set; } = NavigationLinks.DefaultLinks;
+
+    /// <summary>Nome da filial exibida no rodapé do menu.</summary>
+    [Parameter]
+    public string BranchName { get; set; } = "Filial de Arujá";
+
+    /// <summary>Nome exibido do usuário autenticado no rodapé do menu.</summary>
+    [Parameter]
+    public string UserName { get; set; } = "Felipe Mattioli";
+
+    protected override void OnInitialized() =>
+        Navigation.LocationChanged += OnLocationChanged;
+
+    private void Open() => _isOpen = true;
+
+    private void Close() => _isOpen = false;
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        if (!_isOpen)
+        {
+            return;
+        }
+
+        Close();
+        StateHasChanged();
+    }
+
+    public void Dispose() =>
+        Navigation.LocationChanged -= OnLocationChanged;
+}

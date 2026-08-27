@@ -14,3 +14,44 @@
 .app-header-actions {
     gap: 36px;
 }
+
+.app-header-brand {
+    gap: 12px;
+}
+
+@media (max-width: 47.99rem) {
+    .app-header {
+        height: 72px;
+    }
+
+    .app-header-top {
+        height: 72px;
+        padding: 16px 24px;
+    }
+
+    .app-header-actions {
+        gap: 12px;
+    }
+
+    .app-header-brand {
+        gap: 4px;
+        margin-left: -12px;
+    }
+
+    .app-header-actions ::deep .notifications-button {
+        width: 44px;
+        height: 44px;
+    }
+
+    .app-header-actions ::deep .logged-user {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border-radius: 50%;
+        justify-content: center;
+    }
+
+    .app-header-actions ::deep .logged-user-name {
+        display: none;
+    }
+}

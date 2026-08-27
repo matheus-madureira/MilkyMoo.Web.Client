@@ -1,0 +1,16 @@
+.logged-user {
+    background: #f5c1cf;
+    height: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.6rem;
+    color: #000000;
+    border-radius: 70px;
+    padding: 12px 16px;
+}
+
+.logged-user:hover {
+    background: #FFF5F7;
+    color: #E993A7;
+    cursor: pointer;
+}

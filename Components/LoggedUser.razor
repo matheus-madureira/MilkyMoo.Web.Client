@@ -1,0 +1,15 @@
+<button type="button"
+        class="logged-user btn btn-lg"
+        @onclick="OnClick">
+    @UserName
+</button>
+
+@code {
+    /// <summary>Nome exibido do usuário autenticado.</summary>
+    [Parameter]
+    public string UserName { get; set; } = "Usuário logado";
+
+    /// <summary>Disparado quando o usuário clica no próprio nome.</summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+}

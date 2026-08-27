@@ -1,0 +1,21 @@
+.navigation-links {
+    height: 72px;
+    padding: 0px 80px;
+    gap: 64px;
+}
+
+.navigation-links ::deep .nav-link {
+    color: #FFF5F7;
+    font-size: 1.2rem;
+    font-weight: 600;
+    line-height: 1.6rem;
+    border-bottom: 4px solid transparent;
+}
+
+.navigation-links ::deep .nav-link:hover {
+    color: #E993A7;
+}
+
+.navigation-links ::deep .nav-link.active {
+    border-bottom-color: #E993A7;
+}

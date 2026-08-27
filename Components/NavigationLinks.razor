@@ -10,14 +10,18 @@
 
 @code {
     /// <summary>Um item do menu de navegação principal.</summary>
-    public sealed record NavigationLink(string Text, string Href, string Icon, NavLinkMatch Match = NavLinkMatch.Prefix);
+    public sealed record NavigationLink(
+        string Text,
+        string Href, 
+        string Icon, 
+        NavLinkMatch Match = NavLinkMatch.Prefix);
 
     /// <summary>Itens exibidos no menu. Substitua para customizar a navegação.</summary>
     [Parameter]
     public IReadOnlyList<NavigationLink> Links { get; set; } =
     [
         new("Métricas", "", "bi bi-house-door-fill-nav-menu", NavLinkMatch.All),
-        new("Estoque", "counter", "bi bi-plus-square-fill-nav-menu"),
+        new("Estoque", "estoque", "bi bi-plus-square-fill-nav-menu"),
         new("Produtos", "produtos", "bi bi-list-nested-nav-menu"),
         new("Etiquetas", "etiquetas", "bi bi-list-nested-nav-menu")
     ];

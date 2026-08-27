@@ -21,6 +21,22 @@ main {
     padding: 4rem 0px;
 }
 
+/* Cabeçalho padrão das páginas renderizadas em @Body. */
+.content ::deep .page-title {
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1.6rem;
+    color: #000000;
+}
+
+.content ::deep .page-description {
+    padding: 16px 0px;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.6rem;
+    color: #212529;
+}
+
 @media (min-width: 641px) {
     .page {
         flex-direction: row;
@@ -29,5 +45,18 @@ main {
     article {
         padding-left: 3.5rem !important;
         padding-right: 3.5rem !important;
+    }
+}
+
+@media (max-width: 640px) {
+    .content ::deep .page-title {
+        font-size: 22px;
+        line-height: 1.3;
+    }
+
+    .content ::deep .page-description {
+        padding: 12px 0px;
+        font-size: 16px;
+        line-height: 1.5;
     }
 }

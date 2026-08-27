@@ -37,10 +37,28 @@
     transition: color 0.25s ease;
 }
 
+/* Ícone acompanha a altura das duas linhas de texto (rótulo + nome). */
 .label-owner svg {
-    width: 22px;
-    height: 22px;
+    width: 35px;
+    height: 35px;
     flex-shrink: 0;
+    stroke-width: 2.5;
+}
+
+/* Rótulo e nome empilhados, centralizados na altura do ícone do QR code. */
+.label-owner-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.25;
+}
+
+.label-owner-label {
+    font-weight: 600;
+}
+
+.label-owner-name {
+    font-weight: 500;
 }
 
 .label-title {

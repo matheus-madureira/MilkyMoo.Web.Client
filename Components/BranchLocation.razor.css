@@ -17,3 +17,15 @@
         padding-left: 16px;
     }
 }
+
+@media (max-width: 47.99rem) {
+    .branch-location {
+        font-size: 0.8125rem;
+        line-height: 1.2rem;
+    }
+
+    .branch-location ::deep svg {
+        width: 16px;
+        height: 16px;
+    }
+}

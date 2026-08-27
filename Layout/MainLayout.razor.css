@@ -49,6 +49,12 @@ main {
 }
 
 @media (max-width: 640px) {
+    /* Recuo lateral do conteúdo das páginas; o header fica fora de .content. */
+    .content {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
     .content ::deep .page-title {
         font-size: 22px;
         line-height: 1.3;

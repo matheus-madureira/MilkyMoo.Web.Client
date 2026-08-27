@@ -6,7 +6,7 @@
              viewBox="0 0 24 24"
              fill="none"
              stroke="currentColor"
-             stroke-width="3"
+             stroke-width="2"
              stroke-linecap="round"
              stroke-linejoin="round"
              class="lucide lucide-qr-code-icon lucide-qr-code">
@@ -24,7 +24,10 @@
             <path d="M12 21v-1" />
         </svg>
 
-        <span>Responsável: @Label.Owner</span>
+        <div class="label-owner-text">
+            <span class="label-owner-label">Responsável</span>
+            <span class="label-owner-name">@Label.Owner</span>
+        </div>
     </div>
 
     <h2 class="label-title">@Label.Product</h2>

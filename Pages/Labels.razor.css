@@ -31,7 +31,7 @@
     min-width: 140px;
     padding: 0 16px;
     border: 1px solid rgba(29, 29, 27, 0.15);
-    border-radius: 70px;
+    border-radius: 0.375rem;
     background-color: #ffffff;
     font-size: 14px;
     font-weight: 600;
@@ -73,6 +73,29 @@
     font-size: 15px;
     font-weight: 600;
     color: #1d1d1b;
+}
+
+/* No mobile o select fica na mesma linha do título. */
+@media (max-width: 640px) {
+    .labels-header {
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .labels-heading {
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+
+    .labels-page-size {
+        flex-shrink: 0;
+        height: 34px;
+        min-width: 0;
+        padding: 0 10px;
+        font-size: 13px;
+    }
 }
 
 @media (min-width: 768px) {

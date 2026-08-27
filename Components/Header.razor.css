@@ -11,7 +11,7 @@
 }
 
 .app-header-actions {
-    gap: 36px;
+    gap: 28px;
 }
 
 .app-header-brand {
@@ -29,7 +29,7 @@
     }
 
     .app-header-actions {
-        gap: 12px;
+        gap: 8px;
     }
 
     .app-header-brand {
@@ -37,20 +37,20 @@
         margin-left: -12px;
     }
 
-    .app-header-actions ::deep .notifications-button {
-        width: 44px;
-        height: 44px;
-    }
-
-    .app-header-actions ::deep .logged-user {
-        width: 44px;
-        height: 44px;
-        padding: 0;
-        border-radius: 50%;
-        justify-content: center;
-    }
-
-    .app-header-actions ::deep .logged-user-name {
+    /* A filial aparece só no menu lateral aberto, nunca no header. */
+    .app-header-branch {
         display: none;
+    }
+
+    .app-header-actions ::deep .notifications-button,
+    .app-header-actions ::deep .settings-button {
+        width: 36px;
+        height: 36px;
+    }
+
+    .app-header-actions ::deep .notifications-button svg,
+    .app-header-actions ::deep .settings-button svg {
+        width: 18px;
+        height: 18px;
     }
 }

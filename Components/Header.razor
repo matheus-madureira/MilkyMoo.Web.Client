@@ -2,13 +2,21 @@
     <div class="app-header-top d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center app-header-brand">
             <MobileMenu BranchName="Unidade Jardins, São Paulo" />
-            <BranchLocation BranchName="Unidade Jardins, São Paulo" />
+
+            <div class="app-header-branch d-flex align-items-center">
+                <BranchLocation BranchName="Unidade Jardins, São Paulo" />
+            </div>
         </div>
 
         <div class="d-flex align-items-center app-header-actions">
             <NotificationsButton />
-            <LoggedUser />
+            <SettingsButton />
         </div>
     </div>
-    <NavigationLinks />
+
+    <NavigationLinks>
+        <TrailingContent>
+            <LoggedUser />
+        </TrailingContent>
+    </NavigationLinks>
 </header>

@@ -3,12 +3,21 @@
          alt="Logo da MilkyMoo"
          class="navigation-logo" />
 
-    @foreach (NavigationLink link in Links)
+    <div class="navigation-links-items">
+        @foreach (NavigationLink link in Links)
+        {
+            <NavLink class="nav-link" href="@link.Href" Match="@link.Match">
+                <span class="@link.Icon" aria-hidden="true"></span>
+                @link.Text
+            </NavLink>
+        }
+    </div>
+
+    @if (TrailingContent is not null)
     {
-        <NavLink class="nav-link" href="@link.Href" Match="@link.Match">
-            <span class="@link.Icon" aria-hidden="true"></span>
-            @link.Text
-        </NavLink>
+        <div class="navigation-trailing">
+            @TrailingContent
+        </div>
     }
 </nav>
 
@@ -27,6 +36,10 @@
         new("Produtos", "produtos", "bi bi-list-nested-nav-menu"),
         new("Estoque", "estoque", "bi bi-plus-square-fill-nav-menu")
     ];
+
+    /// <summary>Conteúdo ancorado à direita da barra, exibido apenas no desktop.</summary>
+    [Parameter]
+    public RenderFragment? TrailingContent { get; set; }
 
     /// <summary>Itens exibidos no menu. Substitua para customizar a navegação.</summary>
     [Parameter]

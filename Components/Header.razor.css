@@ -1,17 +1,17 @@
 .app-header {
-    height: 140px;
+    height: 124px;
     flex-shrink: 0;
     z-index: 40;
     background-color: oklch(0.233 0.0031 17.38);
 }
 
 .app-header-top {
-    height: 80px;
+    height: 64px;
     padding: 32px 96px;
 }
 
 .app-header-actions {
-    gap: 28px;
+    gap: 12px;
 }
 
 .app-header-brand {
@@ -44,13 +44,13 @@
 
     .app-header-actions ::deep .notifications-button,
     .app-header-actions ::deep .settings-button {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
     }
 
     .app-header-actions ::deep .notifications-button svg,
     .app-header-actions ::deep .settings-button svg {
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
     }
 }

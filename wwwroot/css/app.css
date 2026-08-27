@@ -1,3 +1,5 @@
+@import url("_reset.css");
+
 html, body {
     font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;

@@ -1,23 +1,94 @@
-.etiquetas-grid {
+/* Ocupa exatamente a altura útil de .content, então a página nunca gera scroll externo. */
+.labels-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+/* Cabeçalho fixo: fica fora da região rolável. */
+.labels-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.labels-heading {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.labels-heading .page-description {
+    padding: 0;
+    color: #9a9a97;
+}
+
+.labels-page-size {
+    height: 44px;
+    min-width: 140px;
+    padding: 0 16px;
+    border: 1px solid rgba(29, 29, 27, 0.15);
+    border-radius: 70px;
+    background-color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1b;
+    cursor: pointer;
+}
+
+.labels-page-size:focus,
+.labels-page-size:focus-visible {
+    outline: none;
+    border-color: #E993A7;
+}
+
+.labels-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-top: 24px;
+}
+
+/* Única região rolável da tela. */
+.labels-scroll {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 8px;
+}
+
+.labels-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
+    padding-top: 8px;
 }
 
-.etiquetas-empty {
+.labels-empty {
     font-size: 15px;
     font-weight: 600;
     color: #1d1d1b;
 }
 
 @media (min-width: 768px) {
-    .etiquetas-grid {
+    .labels-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (min-width: 1200px) {
-    .etiquetas-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+    .labels-body {
+        grid-template-columns: 280px minmax(0, 1fr);
+    }
+
+    .labels-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }

@@ -1,5 +1,5 @@
-﻿<article class="etiqueta-card">
-    <div class="etiqueta-owner d-flex align-items-center">
+﻿<article class="label-card">
+    <div class="label-owner d-flex align-items-center">
         <svg xmlns="http://www.w3.org/2000/svg"
              width="24"
              height="24"
@@ -24,32 +24,32 @@
             <path d="M12 21v-1" />
         </svg>
 
-        <span>Responsável: @Etiqueta.Responsavel</span>
+        <span>Responsável: @Label.Owner</span>
     </div>
 
-    <h2 class="etiqueta-title">@Etiqueta.Produto</h2>
-    <p class="etiqueta-state">Estado atual: @Etiqueta.Estado</p>
+    <h2 class="label-title">@Label.Product</h2>
+    <p class="label-state">Estado atual: @Label.State</p>
 
-    <div class="etiqueta-badges">
-        <span class="etiqueta-badge etiqueta-badge-primary">@Etiqueta.Armazenamento</span>
-        <span class="etiqueta-badge etiqueta-badge-secondary">@Etiqueta.Quantidade</span>
+    <div class="label-badges">
+        <span class="label-badge label-badge-primary">@Label.Storage</span>
+        <span class="label-badge label-badge-secondary">@Label.Quantity</span>
     </div>
 
-    <div class="etiqueta-footer d-flex align-items-center justify-content-between">
-        <span class="etiqueta-date">Aberto em: @Etiqueta.AbertoEm</span>
-        <span class="etiqueta-date">Vencimento em: @Etiqueta.VencimentoEm</span>
+    <div class="label-footer d-flex align-items-center justify-content-between">
+        <span class="label-date">Aberto em: @Label.OpenedAt</span>
+        <span class="label-date">Vencimento em: @Label.ExpiresAt</span>
     </div>
 
-    <div class="etiqueta-actions">
+    <div class="label-actions">
         <button type="button"
-                class="etiqueta-action btn btn-lg d-flex align-items-center justify-content-center"
-                @onclick="OnDetalhes">
+                class="label-action btn btn-lg d-flex align-items-center justify-content-center"
+                @onclick="OnDetails">
             Detalhes
         </button>
 
         <button type="button"
-                class="etiqueta-action btn btn-lg d-flex align-items-center justify-content-center"
-                @onclick="OnImprimir">
+                class="label-action btn btn-lg d-flex align-items-center justify-content-center"
+                @onclick="OnPrint">
             Imprimir
         </button>
     </div>
@@ -57,25 +57,25 @@
 
 @code {
     /// <summary>Uma etiqueta impressa para acompanhamento da validade de um produto.</summary>
-    public sealed record EtiquetaImpressa(
+    public sealed record PrintedLabel(
         int Id,
-        string Responsavel,
-        string Produto,
-        string Estado,
-        string Armazenamento,
-        string Quantidade,
-        string AbertoEm,
-        string VencimentoEm);
+        string Owner,
+        string Product,
+        string State,
+        string Storage,
+        string Quantity,
+        string OpenedAt,
+        string ExpiresAt);
 
     /// <summary>Etiqueta exibida no card.</summary>
     [Parameter, EditorRequired]
-    public required EtiquetaImpressa Etiqueta { get; set; }
+    public required PrintedLabel Label { get; set; }
 
     /// <summary>Disparado quando o usuário abre os detalhes da etiqueta.</summary>
     [Parameter]
-    public EventCallback OnDetalhes { get; set; }
+    public EventCallback OnDetails { get; set; }
 
     /// <summary>Disparado quando o usuário solicita a impressão da etiqueta.</summary>
     [Parameter]
-    public EventCallback OnImprimir { get; set; }
+    public EventCallback OnPrint { get; set; }
 }

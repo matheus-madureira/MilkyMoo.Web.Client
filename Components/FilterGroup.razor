@@ -1,0 +1,49 @@
+﻿<section class="filter-group">
+    <button type="button"
+            class="filter-group-toggle btn d-flex align-items-center justify-content-between"
+            aria-expanded="@(_isExpanded ? "true" : "false")"
+            @onclick="Toggle">
+        <span class="filter-group-title">@Title</span>
+
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="20"
+             height="20"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="3"
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             class="filter-group-chevron @(_isExpanded ? "is-expanded" : string.Empty)"
+             aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+        </svg>
+    </button>
+
+    @if (_isExpanded)
+    {
+        <div class="filter-group-content">
+            @ChildContent
+        </div>
+    }
+</section>
+
+@code {
+    private bool _isExpanded;
+
+    /// <summary>Título exibido no cabeçalho do grupo.</summary>
+    [Parameter, EditorRequired]
+    public required string Title { get; set; }
+
+    /// <summary>Indica se o grupo inicia aberto.</summary>
+    [Parameter]
+    public bool Expanded { get; set; } = true;
+
+    /// <summary>Opções exibidas quando o grupo está aberto.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    protected override void OnInitialized() => _isExpanded = Expanded;
+
+    private void Toggle() => _isExpanded = !_isExpanded;
+}

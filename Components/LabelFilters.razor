@@ -1,0 +1,190 @@
+﻿<aside class="label-filters">
+    <div class="label-filters-header d-flex align-items-center justify-content-between">
+        <button type="button"
+                class="label-filters-heading btn d-flex align-items-center"
+                aria-expanded="@(_isOpen ? "true" : "false")"
+                aria-controls="label-filters-groups"
+                @onclick="ToggleGroups">
+            <span class="label-filters-title">Filtros</span>
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="20"
+                 height="20"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="3"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 class="label-filters-chevron @(_isOpen ? "is-open" : string.Empty)"
+                 aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+        </button>
+
+        <button type="button" class="label-filters-clear btn" @onclick="ClearAll">
+            Limpar tudo
+        </button>
+    </div>
+
+    <div id="label-filters-groups" class="label-filters-groups @(_isOpen ? "is-open" : string.Empty)">
+        <FilterGroup Title="Estado da embalagem">
+            <FilterOption Text="Todas"
+                          Count="Labels.Count"
+                          IsChecked="State.States.Count == 0"
+                          OnToggle="ClearPackageStates" />
+
+            <FilterOption Text="Abertas"
+                          Count="CountByState(PackageState.Open)"
+                          IsChecked="State.States.Contains(PackageState.Open)"
+                          OnToggle="() => TogglePackageState(PackageState.Open)" />
+
+            <FilterOption Text="Fechadas"
+                          Count="CountByState(PackageState.Closed)"
+                          IsChecked="State.States.Contains(PackageState.Closed)"
+                          OnToggle="() => TogglePackageState(PackageState.Closed)" />
+        </FilterGroup>
+
+        <FilterGroup Title="Vencimentos">
+            <FilterOption Text="Todos"
+                          IsChecked="State.Expiration == ExpirationOrder.None"
+                          OnToggle="() => SetExpiration(ExpirationOrder.None)" />
+
+            <FilterOption Text="Mais próximos"
+                          IsChecked="State.Expiration == ExpirationOrder.Soonest"
+                          OnToggle="() => SetExpiration(ExpirationOrder.Soonest)" />
+
+            <FilterOption Text="Mais longos"
+                          IsChecked="State.Expiration == ExpirationOrder.Longest"
+                          OnToggle="() => SetExpiration(ExpirationOrder.Longest)" />
+        </FilterGroup>
+
+        <FilterGroup Title="Responsável">
+            <div class="label-filters-owners">
+                <FilterOption Text="Todos"
+                              Count="Labels.Count"
+                              IsChecked="State.Owners.Count == 0"
+                              OnToggle="ClearOwners" />
+
+                @foreach (string owner in Owners)
+                {
+                    <FilterOption @key="owner"
+                                  Text="@owner"
+                                  Count="CountByOwner(owner)"
+                                  IsChecked="State.Owners.Contains(owner)"
+                                  OnToggle="() => ToggleOwner(owner)" />
+                }
+            </div>
+        </FilterGroup>
+    </div>
+</aside>
+
+@code {
+    private bool _isOpen;
+
+    /// <summary>Estado da embalagem usado no filtro.</summary>
+    public enum PackageState
+    {
+        Open,
+        Closed
+    }
+
+    /// <summary>Ordenação aplicada pela data de vencimento.</summary>
+    public enum ExpirationOrder
+    {
+        None,
+        Soonest,
+        Longest
+    }
+
+    /// <summary>Seleção atual dos filtros. Coleções vazias significam "todos".</summary>
+    public sealed record LabelFilterState(
+        IReadOnlySet<PackageState> States,
+        ExpirationOrder Expiration,
+        IReadOnlySet<string> Owners)
+    {
+        /// <summary>Estado inicial, sem nenhuma restrição aplicada.</summary>
+        public static LabelFilterState Empty { get; } =
+            new(new HashSet<PackageState>(), ExpirationOrder.None, new HashSet<string>());
+    }
+
+    /// <summary>Etiquetas usadas para montar as opções e os contadores.</summary>
+    [Parameter, EditorRequired]
+    public required IReadOnlyList<LabelCard.PrintedLabel> Labels { get; set; }
+
+    /// <summary>Seleção atual dos filtros.</summary>
+    [Parameter, EditorRequired]
+    public required LabelFilterState State { get; set; }
+
+    /// <summary>Disparado sempre que a seleção dos filtros muda.</summary>
+    [Parameter]
+    public EventCallback<LabelFilterState> OnChanged { get; set; }
+
+    /// <summary>Responsáveis distintos encontrados nas etiquetas, em ordem alfabética.</summary>
+    private IEnumerable<string> Owners =>
+        Labels.Select(label => label.Owner).Distinct().Order();
+
+    /// <summary>Traduz o estado textual da etiqueta para a opção equivalente do filtro.</summary>
+    public static PackageState StateOf(LabelCard.PrintedLabel label) =>
+        string.Equals(label.State, "Aberto", StringComparison.OrdinalIgnoreCase)
+            ? PackageState.Open
+            : PackageState.Closed;
+
+    private int CountByState(PackageState state) =>
+        Labels.Count(label => StateOf(label) == state);
+
+    private int CountByOwner(string owner) =>
+        Labels.Count(label => label.Owner == owner);
+
+    private void ToggleGroups() => _isOpen = !_isOpen;
+
+    private Task ClearAll() => Notify(LabelFilterState.Empty);
+
+    private Task ClearPackageStates() =>
+        Notify(State with { States = new HashSet<PackageState>() });
+
+    private Task ClearOwners() =>
+        Notify(State with { Owners = new HashSet<string>() });
+
+    /// <summary>Marcar todos os estados equivale a "Todas", então a seleção volta a ficar vazia.</summary>
+    private Task TogglePackageState(PackageState state)
+    {
+        HashSet<PackageState> states = new(State.States);
+
+        if (!states.Add(state))
+        {
+            states.Remove(state);
+        }
+
+        if (states.Count == Enum.GetValues<PackageState>().Length)
+        {
+            states.Clear();
+        }
+
+        return Notify(State with { States = states });
+    }
+
+    /// <summary>Marcar todos os responsáveis equivale a "Todos", então a seleção volta a ficar vazia.</summary>
+    private Task ToggleOwner(string owner)
+    {
+        HashSet<string> owners = new(State.Owners);
+
+        if (!owners.Add(owner))
+        {
+            owners.Remove(owner);
+        }
+
+        if (owners.Count == Owners.Count())
+        {
+            owners.Clear();
+        }
+
+        return Notify(State with { Owners = owners });
+    }
+
+    /// <summary>A ordenação é exclusiva: marcar uma opção desmarca a anterior.</summary>
+    private Task SetExpiration(ExpirationOrder order) =>
+        Notify(State with { Expiration = State.Expiration == order ? ExpirationOrder.None : order });
+
+    private Task Notify(LabelFilterState state) => OnChanged.InvokeAsync(state);
+}

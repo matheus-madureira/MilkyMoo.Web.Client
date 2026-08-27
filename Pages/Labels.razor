@@ -1,37 +1,110 @@
 ﻿@page "/etiquetas"
+@using System.Globalization
 @inject HttpClient Http
 
 <PageTitle>Etiquetas Milky Moo</PageTitle>
 
-<h1 class="page-title">
-    GERENCIAR ETIQUETAS
-</h1>
+<div class="labels-page">
+    <header class="labels-header">
+        <div class="labels-heading">
+            <h1 class="page-title">Gerenciar Etiquetas</h1>
+            <p class="page-description">Etiquetas Emitidas (@_visibleLabels.Count)</p>
+        </div>
 
-<p class="page-description">
-    Quantidade de etiquetas impressas para acompanhamento das validades.
-</p>
+        <select class="labels-page-size"
+                aria-label="Quantidade de etiquetas exibidas"
+                @bind="_pageSize"
+                @bind:after="ApplyFilters">
+            @foreach (int size in PageSizes)
+            {
+                <option value="@size">@size items</option>
+            }
+        </select>
+    </header>
 
-@if (_etiquetas is null)
-{
-    <p class="etiquetas-empty">Carregando etiquetas...</p>
-}
-else if (_etiquetas.Count == 0)
-{
-    <p class="etiquetas-empty">Nenhuma etiqueta impressa até o momento.</p>
-}
-else
-{
-    <div class="etiquetas-grid">
-        @foreach (LabelCard.EtiquetaImpressa etiqueta in _etiquetas)
-        {
-            <LabelCard @key="etiqueta.Id" Etiqueta="etiqueta" />
-        }
+    <div class="labels-body">
+        <LabelFilters Labels="_labels ?? []"
+                      State="_filters"
+                      OnChanged="OnFiltersChanged" />
+
+        <div class="labels-scroll">
+            @if (_labels is null)
+            {
+                <p class="labels-empty">Carregando etiquetas...</p>
+            }
+            else if (_visibleLabels.Count == 0)
+            {
+                <p class="labels-empty">Nenhuma etiqueta encontrada para os filtros selecionados.</p>
+            }
+            else
+            {
+                <div class="labels-grid">
+                    @foreach (LabelCard.PrintedLabel label in _visibleLabels)
+                    {
+                        <LabelCard @key="label.Id" Label="label" />
+                    }
+                </div>
+            }
+        </div>
     </div>
-}
+</div>
 
 @code {
-    private IReadOnlyList<LabelCard.EtiquetaImpressa>? _etiquetas;
+    private const string DateFormat = "dd/MM/yyyy";
 
-    protected override async Task OnInitializedAsync() =>
-        _etiquetas = await Http.GetFromJsonAsync<LabelCard.EtiquetaImpressa[]>("sample-data/labels.json");
+    private static readonly int[] PageSizes = [10, 20, 50, 100];
+
+    private IReadOnlyList<LabelCard.PrintedLabel>? _labels;
+    private IReadOnlyList<LabelCard.PrintedLabel> _visibleLabels = [];
+    private LabelFilters.LabelFilterState _filters = LabelFilters.LabelFilterState.Empty;
+    private int _pageSize = PageSizes[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _labels = await Http.GetFromJsonAsync<LabelCard.PrintedLabel[]>("sample-data/labels.json");
+        ApplyFilters();
+    }
+
+    private void OnFiltersChanged(LabelFilters.LabelFilterState filters)
+    {
+        _filters = filters;
+        ApplyFilters();
+    }
+
+    /// <summary>Filtra por estado e responsável, ordena por vencimento e limita a quantidade exibida.</summary>
+    private void ApplyFilters()
+    {
+        if (_labels is null)
+        {
+            _visibleLabels = [];
+            return;
+        }
+
+        IEnumerable<LabelCard.PrintedLabel> labels = _labels;
+
+        if (_filters.States.Count > 0)
+        {
+            labels = labels.Where(label => _filters.States.Contains(LabelFilters.StateOf(label)));
+        }
+
+        if (_filters.Owners.Count > 0)
+        {
+            labels = labels.Where(label => _filters.Owners.Contains(label.Owner));
+        }
+
+        // Datas inválidas vão para o fim da lista nas duas ordenações.
+        labels = _filters.Expiration switch
+        {
+            LabelFilters.ExpirationOrder.Soonest => labels.OrderBy(label => ExpirationOf(label, DateOnly.MaxValue)),
+            LabelFilters.ExpirationOrder.Longest => labels.OrderByDescending(label => ExpirationOf(label, DateOnly.MinValue)),
+            _ => labels
+        };
+
+        _visibleLabels = labels.Take(_pageSize).ToArray();
+    }
+
+    private static DateOnly ExpirationOf(LabelCard.PrintedLabel label, DateOnly fallback) =>
+        DateOnly.TryParseExact(label.ExpiresAt, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly expiresAt)
+            ? expiresAt
+            : fallback;
 }

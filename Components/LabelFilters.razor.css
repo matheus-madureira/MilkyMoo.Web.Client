@@ -1,0 +1,95 @@
+/* Painel fixo: apenas a lista de responsáveis rola dentro dele. */
+.label-filters {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 20px 22px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 10px 20px -3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03);
+}
+
+.label-filters-header {
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.label-filters-heading {
+    gap: 8px;
+    padding: 0;
+    border: none;
+    background: none;
+}
+
+.label-filters-title {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #000000;
+}
+
+.label-filters-chevron {
+    flex-shrink: 0;
+    color: #1d1d1b;
+    transition: transform 0.25s ease;
+}
+
+.label-filters-chevron.is-open {
+    transform: rotate(180deg);
+}
+
+.label-filters-clear {
+    padding: 0;
+    border: none;
+    background: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: #9a9a97;
+    white-space: nowrap;
+}
+
+.label-filters-clear:hover {
+    color: #E993A7;
+    cursor: pointer;
+}
+
+/* Abaixo do desktop os grupos ficam recolhidos até o usuário abrir o painel. */
+.label-filters-groups {
+    display: none;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.label-filters-groups.is-open {
+    display: block;
+    max-height: 45dvh;
+    padding-top: 4px;
+}
+
+/* Lista de responsáveis com scroll próprio quando houver muitos nomes. */
+.label-filters-owners {
+    max-height: 220px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 6px;
+}
+
+@media (min-width: 1200px) {
+    .label-filters {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .label-filters-chevron {
+        display: none;
+    }
+
+    .label-filters-groups,
+    .label-filters-groups.is-open {
+        display: block;
+        flex: 1;
+        max-height: none;
+        padding-top: 4px;
+    }
+}

@@ -1,0 +1,43 @@
+.filter-group {
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(29, 29, 27, 0.1);
+}
+
+.filter-group:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.filter-group-toggle {
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    text-align: left;
+}
+
+.filter-group-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #000000;
+}
+
+.filter-group-chevron {
+    flex-shrink: 0;
+    color: #1d1d1b;
+    transition: transform 0.25s ease;
+}
+
+.filter-group-chevron.is-expanded {
+    transform: rotate(180deg);
+}
+
+.filter-group-toggle:hover .filter-group-title,
+.filter-group-toggle:hover .filter-group-chevron {
+    color: #E993A7;
+}
+
+.filter-group-content {
+    padding-top: 10px;
+}

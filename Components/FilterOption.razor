@@ -1,0 +1,31 @@
+﻿<label class="filter-option d-flex align-items-center">
+    <input type="checkbox"
+           class="filter-option-input"
+           checked="@IsChecked"
+           @onchange="() => OnToggle.InvokeAsync()" />
+
+    <span class="filter-option-text">@Text</span>
+
+    @if (Count is int count)
+    {
+        <span class="filter-option-count">(@count)</span>
+    }
+</label>
+
+@code {
+    /// <summary>Rótulo exibido ao lado do checkbox.</summary>
+    [Parameter, EditorRequired]
+    public required string Text { get; set; }
+
+    /// <summary>Quantidade de etiquetas atendidas pela opção. Omitido quando nulo.</summary>
+    [Parameter]
+    public int? Count { get; set; }
+
+    /// <summary>Indica se a opção está marcada.</summary>
+    [Parameter]
+    public bool IsChecked { get; set; }
+
+    /// <summary>Disparado quando o usuário marca ou desmarca a opção.</summary>
+    [Parameter]
+    public EventCallback OnToggle { get; set; }
+}

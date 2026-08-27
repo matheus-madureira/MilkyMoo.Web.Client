@@ -5,17 +5,30 @@
 }
 
 .navigation-links ::deep .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    align-self: stretch;
     color: #FFF5F7;
     font-size: 1.2rem;
     font-weight: 600;
     line-height: 1.6rem;
-    border-bottom: 4px solid transparent;
+}
+
+.navigation-links ::deep .nav-link::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 4px;
+    border-radius: 4px 4px 0 0;
+    background-color: transparent;
 }
 
 .navigation-links ::deep .nav-link:hover {
     color: #E993A7;
 }
 
-.navigation-links ::deep .nav-link.active {
-    border-bottom-color: #E993A7;
+.navigation-links ::deep .nav-link.active::after {
+    background-color: #E993A7;
 }

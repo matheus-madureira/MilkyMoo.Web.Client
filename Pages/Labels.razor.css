@@ -59,6 +59,7 @@
     overflow-y: auto;
     overscroll-behavior: contain;
     padding-right: 8px;
+    height: 344px;
 }
 
 .labels-grid {

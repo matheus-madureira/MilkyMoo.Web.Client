@@ -22,16 +22,16 @@ else if (_etiquetas.Count == 0)
 else
 {
     <div class="etiquetas-grid">
-        @foreach (EtiquetaCard.EtiquetaImpressa etiqueta in _etiquetas)
+        @foreach (LabelCard.EtiquetaImpressa etiqueta in _etiquetas)
         {
-            <EtiquetaCard @key="etiqueta.Id" Etiqueta="etiqueta" />
+            <LabelCard @key="etiqueta.Id" Etiqueta="etiqueta" />
         }
     </div>
 }
 
 @code {
-    private IReadOnlyList<EtiquetaCard.EtiquetaImpressa>? _etiquetas;
+    private IReadOnlyList<LabelCard.EtiquetaImpressa>? _etiquetas;
 
     protected override async Task OnInitializedAsync() =>
-        _etiquetas = await Http.GetFromJsonAsync<EtiquetaCard.EtiquetaImpressa[]>("sample-data/etiquetas.json");
+        _etiquetas = await Http.GetFromJsonAsync<LabelCard.EtiquetaImpressa[]>("sample-data/labels.json");
 }

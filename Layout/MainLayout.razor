@@ -1,0 +1,54 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <main>
+        <header style="background-color: oklch(0.233 0.0031 17.38);">
+            <div class="d-flex align-items-center justify-content-between"
+                 style="height: 80px; padding: 52px 96px;">
+                <img src="/images/logo.webp"
+                     alt="Logo da MilkyMoo"
+                     style="width: 80px; height: 80px;" />
+
+                <div class="d-flex align-items-center" style="gap: 36px;">
+                    <button type="button"
+                            class="btn btn-lg d-flex align-items-center"
+                            style="background: #f5c1cf; width: 50px; height: 50px; color: #000000; border-radius: 50%;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell-icon lucide-bell"><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg>
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-lg"
+                            style="background: #f5c1cf; width: 100%; height: 50px; font-size: 1rem; font-weight: 700; line-height: 1.6rem; color: #000000; border-radius:  70px; padding: 12px 16px;">
+                        Usuário logado
+                    </button>
+                </div>
+            </div>
+            <hr style="margin: 8px 0px; color: #718096;" />
+            <div class="d-flex justify-content-center align-items-center"
+                 style="height: 72px; padding: 0px 80px; gap: 64px;">
+                <NavLink class="nav-link" style="color: #FFF5F7; font-size: 1.2rem; font-weight: 600; line-height: 1.6rem;" href="" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span>
+                    Métricas
+                </NavLink>
+
+                <NavLink class="nav-link" style="color: #FFF5F7; font-size: 1.2rem; font-weight: 600; line-height: 1.6rem;" href="counter">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span>
+                    Estoque
+                </NavLink>
+
+                <NavLink class="nav-link" style="color: #FFF5F7; font-size: 1.2rem; font-weight: 600; line-height: 1.6rem;" href="weather">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>
+                    Produtos
+                </NavLink>
+
+                <NavLink class="nav-link" style="color: #FFF5F7; font-size: 1.2rem; font-weight: 600; line-height: 1.6rem;" href="weather">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span>
+                    Etiquetas
+                </NavLink>
+            </div>
+        </header>
+        <article class="content px-4" style="background-color: #FFF5F7;">
+            @Body
+        </article>
+    </main>
+</div>

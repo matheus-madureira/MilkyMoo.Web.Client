@@ -11,16 +11,6 @@
     padding: 32px 96px;
 }
 
-.app-header-logo {
-    width: 80px;
-    height: 80px;
-}
-
 .app-header-actions {
     gap: 36px;
-}
-
-.app-header-divider {
-    margin: 0px;
-    color: #718096;
 }

@@ -1,0 +1,13 @@
+.branch-location {
+    height: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.6rem;
+    color: #f5c1cf;
+}
+
+.branch-location ::deep svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}

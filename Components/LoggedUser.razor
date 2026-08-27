@@ -1,27 +1,24 @@
 <button type="button"
-        class="logged-user btn btn-lg d-flex align-items-center"
+        class="logged-user btn d-flex align-items-center"
         @onclick="OnClick">
-    <svg xmlns="http://www.w3.org/2000/svg" 
-         width="24" 
-         height="24" 
-         viewBox="0 0 24 24" 
-         fill="none" 
-         stroke="currentColor" 
-         stroke-width="3" 
-         stroke-linecap="round" 
-         stroke-linejoin="round" 
-         class="lucide lucide-circle-user-icon lucide-circle-user" 
-         aria-hidden="true">
-         <circle cx="12" cy="12" r="10" /><circle cx="12" cy="10" r="3" />
-         <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
-     </svg>
-    <span class="logged-user-name">@UserName</span>
+    <img class="logged-user-avatar"
+         src="/images/avatar-example.jpg"
+         alt="Foto de @UserName" />
+
+    <span class="logged-user-info d-flex flex-column">
+        <span class="logged-user-name">@UserName</span>
+        <span class="logged-user-role">@Role</span>
+    </span>
 </button>
 
 @code {
     /// <summary>Nome exibido do usuário autenticado.</summary>
     [Parameter]
-    public string UserName { get; set; } = "Felipe Mattioli";
+    public string UserName { get; set; } = "John Doe";
+
+    /// <summary>Cargo exibido abaixo do nome do usuário.</summary>
+    [Parameter]
+    public string Role { get; set; } = "Gestor";
 
     /// <summary>Disparado quando o usuário clica no próprio nome.</summary>
     [Parameter]

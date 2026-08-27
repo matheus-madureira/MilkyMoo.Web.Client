@@ -1,0 +1,114 @@
+.etiqueta-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 22px 24px 18px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04), 0 10px 20px -3px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.03);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.etiqueta-card::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 22px;
+    background: linear-gradient(135deg, oklch(0.146 0.0017 17.35), oklch(0.1879 0.0016 17.3), rgba(0, 0, 0, 0.1));
+    background: linear-gradient(135deg, oklch(0.146 0.0017 17.35), oklch(0.1879 0.0016 17.3), rgba(0, 0, 0, 0.1));
+    z-index: -1;
+    opacity: 0.85;
+}
+
+.etiqueta-card:hover {
+    transform: translateY(-4px);
+    background-color: oklch(0.233 0.0031 17.38);
+    box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.06), 0 20px 30px -6px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.etiqueta-owner {
+    gap: 8px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+    transition: color 0.25s ease;
+}
+
+.etiqueta-owner svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+
+.etiqueta-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #000000;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    transition: color 0.25s ease;
+}
+
+.etiqueta-state {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1b;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+    transition: color 0.25s ease;
+}
+
+.etiqueta-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.etiqueta-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 11px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    color: #000000;
+}
+
+.etiqueta-badge-primary {
+    background-color: #ffb347;
+}
+
+.etiqueta-badge-secondary {
+    background-color: #f5c1cf;
+}
+
+.etiqueta-footer {
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 4px;
+}
+
+.etiqueta-date {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1d1d1b;
+    letter-spacing: 0.01em;
+    transition: color 0.25s ease;
+}
+
+.etiqueta-card:hover .etiqueta-title {
+    color: #f5c1cf;
+}
+
+.etiqueta-card:hover .etiqueta-owner,
+.etiqueta-card:hover .etiqueta-state,
+.etiqueta-card:hover .etiqueta-date {
+    color: #ffffff;
+}

@@ -1,7 +1,6 @@
 .app-header {
     height: 140px;
-    position: sticky;
-    top: 0;
+    flex-shrink: 0;
     z-index: 40;
     background-color: oklch(0.233 0.0031 17.38);
 }

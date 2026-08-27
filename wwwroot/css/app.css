@@ -5,6 +5,8 @@ html, body {
     font-optical-sizing: auto;
     font-style: normal;
     background-color: #FFF5F7;
+    height: 100dvh;
+    overflow: hidden;
 }
 
 h1:focus {

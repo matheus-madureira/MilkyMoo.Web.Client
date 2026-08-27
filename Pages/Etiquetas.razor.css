@@ -1,0 +1,23 @@
+.etiquetas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+.etiquetas-empty {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1b;
+}
+
+@media (min-width: 768px) {
+    .etiquetas-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1200px) {
+    .etiquetas-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}

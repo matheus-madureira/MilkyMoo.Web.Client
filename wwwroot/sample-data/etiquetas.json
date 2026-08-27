@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "responsavel": "Felipe Mattioli",
+    "produto": "Pote de Avelã Nutella",
+    "estado": "Aberto",
+    "armazenamento": "Temp. Ambiente",
+    "quantidade": "3KG",
+    "abertoEm": "26/08/2026",
+    "vencimentoEm": "10/09/2026"
+  },
+  {
+    "id": 2,
+    "responsavel": "Beatriz Nogueira",
+    "produto": "Calda de Morango",
+    "estado": "Aberto",
+    "armazenamento": "Refrigerado",
+    "quantidade": "1,5KG",
+    "abertoEm": "24/08/2026",
+    "vencimentoEm": "03/09/2026"
+  },
+  {
+    "id": 3,
+    "responsavel": "Rafael Andrade",
+    "produto": "Leite Condensado",
+    "estado": "Fechado",
+    "armazenamento": "Temp. Ambiente",
+    "quantidade": "5KG",
+    "abertoEm": "20/08/2026",
+    "vencimentoEm": "18/02/2027"
+  },
+  {
+    "id": 4,
+    "responsavel": "Camila Duarte",
+    "produto": "Creme de Leite Fresco",
+    "estado": "Aberto",
+    "armazenamento": "Refrigerado",
+    "quantidade": "2L",
+    "abertoEm": "26/08/2026",
+    "vencimentoEm": "31/08/2026"
+  },
+  {
+    "id": 5,
+    "responsavel": "Lucas Ferreira",
+    "produto": "Polpa de Açaí",
+    "estado": "Fechado",
+    "armazenamento": "Congelado",
+    "quantidade": "10KG",
+    "abertoEm": "12/08/2026",
+    "vencimentoEm": "12/02/2027"
+  },
+  {
+    "id": 6,
+    "responsavel": "Marina Salles",
+    "produto": "Base de Sorvete Baunilha",
+    "estado": "Aberto",
+    "armazenamento": "Refrigerado",
+    "quantidade": "4L",
+    "abertoEm": "25/08/2026",
+    "vencimentoEm": "01/09/2026"
+  },
+  {
+    "id": 7,
+    "responsavel": "Felipe Mattioli",
+    "produto": "Chocolate Meio Amargo",
+    "estado": "Aberto",
+    "armazenamento": "Temp. Ambiente",
+    "quantidade": "2,5KG",
+    "abertoEm": "18/08/2026",
+    "vencimentoEm": "18/11/2026"
+  },
+  {
+    "id": 8,
+    "responsavel": "Beatriz Nogueira",
+    "produto": "Morango Congelado",
+    "estado": "Fechado",
+    "armazenamento": "Congelado",
+    "quantidade": "6KG",
+    "abertoEm": "10/08/2026",
+    "vencimentoEm": "10/12/2026"
+  },
+  {
+    "id": 9,
+    "responsavel": "Rafael Andrade",
+    "produto": "Paçoca Triturada",
+    "estado": "Aberto",
+    "armazenamento": "Temp. Ambiente",
+    "quantidade": "1KG",
+    "abertoEm": "22/08/2026",
+    "vencimentoEm": "22/09/2026"
+  },
+  {
+    "id": 10,
+    "responsavel": "Camila Duarte",
+    "produto": "Leite Integral",
+    "estado": "Aberto",
+    "armazenamento": "Refrigerado",
+    "quantidade": "12L",
+    "abertoEm": "27/08/2026",
+    "vencimentoEm": "02/09/2026"
+  },
+  {
+    "id": 11,
+    "responsavel": "Lucas Ferreira",
+    "produto": "Cobertura de Caramelo",
+    "estado": "Fechado",
+    "armazenamento": "Temp. Ambiente",
+    "quantidade": "3KG",
+    "abertoEm": "15/08/2026",
+    "vencimentoEm": "15/01/2027"
+  },
+  {
+    "id": 12,
+    "responsavel": "Marina Salles",
+    "produto": "Massa de Waffle",
+    "estado": "Aberto",
+    "armazenamento": "Refrigerado",
+    "quantidade": "2KG",
+    "abertoEm": "26/08/2026",
+    "vencimentoEm": "30/08/2026"
+  }
+]

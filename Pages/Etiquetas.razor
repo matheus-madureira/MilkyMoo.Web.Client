@@ -1,4 +1,5 @@
-﻿@page "/etiquetas"
+@page "/etiquetas"
+@inject HttpClient Http
 
 <PageTitle>Etiquetas Milky Moo</PageTitle>
 
@@ -7,5 +8,30 @@
 </h1>
 
 <p style="padding: 16px 0px; font-weight: 600; font-size: 20px; line-height: 1.6rem; color: #212529;">
-    Acompanhamento das validades em tempo real.
+    Quantidade de etiquetas impressas para acompanhamento das validades.
 </p>
+
+@if (_etiquetas is null)
+{
+    <p class="etiquetas-empty">Carregando etiquetas...</p>
+}
+else if (_etiquetas.Count == 0)
+{
+    <p class="etiquetas-empty">Nenhuma etiqueta impressa até o momento.</p>
+}
+else
+{
+    <div class="etiquetas-grid">
+        @foreach (EtiquetaCard.EtiquetaImpressa etiqueta in _etiquetas)
+        {
+            <EtiquetaCard @key="etiqueta.Id" Etiqueta="etiqueta" />
+        }
+    </div>
+}
+
+@code {
+    private IReadOnlyList<EtiquetaCard.EtiquetaImpressa>? _etiquetas;
+
+    protected override async Task OnInitializedAsync() =>
+        _etiquetas = await Http.GetFromJsonAsync<EtiquetaCard.EtiquetaImpressa[]>("sample-data/etiquetas.json");
+}

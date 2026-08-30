@@ -1,0 +1,229 @@
+﻿@implements IDisposable
+
+@if (_isMounted)
+{
+    <div class="sheet-root"
+         tabindex="-1"
+         @ref="_root"
+         @onkeydown="OnKeyDown">
+
+        <div class="sheet-overlay" data-state="@StateAttribute" @onclick="OverlayClicked"></div>
+
+        <div class="sheet-content sheet-@SideClass"
+             data-state="@StateAttribute"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="@_titleId"
+             aria-describedby="@(Description is null ? null : _descriptionId)">
+
+            <header class="sheet-header d-flex align-items-start justify-content-between">
+                <div class="sheet-heading">
+                    <h2 class="sheet-title" id="@_titleId">@Title</h2>
+
+                    @if (Description is not null)
+                    {
+                        <p class="sheet-description" id="@_descriptionId">@Description</p>
+                    }
+                </div>
+
+                @if (ShowCloseButton)
+                {
+                    <button type="button"
+                            class="sheet-close btn d-flex align-items-center justify-content-center"
+                            aria-label="Fechar"
+                            @onclick="CloseAsync">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                             width="24"
+                             height="24"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             class="lucide lucide-x-icon lucide-x"
+                             aria-hidden="true">
+                            <path d="M18 6 6 18" />
+                            <path d="m6 6 12 12" />
+                        </svg>
+                    </button>
+                }
+            </header>
+
+            <div class="sheet-body">
+                <CascadingValue Value="this" IsFixed="true">
+                    @ChildContent
+                </CascadingValue>
+            </div>
+
+            @if (FooterContent is not null)
+            {
+                <footer class="sheet-footer">
+                    @FooterContent
+                </footer>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    /// <summary>Borda da tela por onde o painel entra.</summary>
+    public enum SheetSide
+    {
+        Right,
+        Left,
+        Top,
+        Bottom
+    }
+
+    /// <summary>Duração da animação de entrada e saída. Precisa casar com o CSS.</summary>
+    private const int TransitionMilliseconds = 220;
+
+    private readonly string _titleId = $"sheet-title-{Guid.NewGuid():N}";
+    private readonly string _descriptionId = $"sheet-description-{Guid.NewGuid():N}";
+
+    private ElementReference _root;
+    private CancellationTokenSource? _closing;
+    private bool _isMounted;
+    private bool _shouldFocus;
+
+    /// <summary>Indica se o painel está aberto. Suporta <c>@bind-Open</c>.</summary>
+    [Parameter]
+    public bool Open { get; set; }
+
+    /// <summary>Disparado quando o painel se fecha por conta própria (X, overlay ou Esc).</summary>
+    [Parameter]
+    public EventCallback<bool> OpenChanged { get; set; }
+
+    /// <summary>Borda por onde o painel desliza.</summary>
+    [Parameter]
+    public SheetSide Side { get; set; } = SheetSide.Right;
+
+    /// <summary>Título exibido no cabeçalho e usado como rótulo acessível.</summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>Texto auxiliar abaixo do título. Omitido quando nulo.</summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>Indica se o botão de fechar padrão aparece no cabeçalho.</summary>
+    [Parameter]
+    public bool ShowCloseButton { get; set; } = true;
+
+    /// <summary>Indica se clicar fora do painel o fecha.</summary>
+    [Parameter]
+    public bool CloseOnOverlayClick { get; set; } = true;
+
+    /// <summary>Conteúdo do painel, na única região rolável.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Rodapé fixo abaixo do conteúdo. Omitido quando nulo.</summary>
+    [Parameter]
+    public RenderFragment? FooterContent { get; set; }
+
+    private string StateAttribute => Open ? "open" : "closed";
+
+    private string SideClass => Side.ToString().ToLowerInvariant();
+
+    /// <summary>
+    /// O painel é montado já com <c>data-state="open"</c> para que a animação de entrada dispare na inserção,
+    /// e permanece montado durante a animação de saída — senão o Blazor removeria o nó antes dela terminar.
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        if (Open)
+        {
+            CancelClosing();
+
+            if (!_isMounted)
+            {
+                _isMounted = true;
+                _shouldFocus = true;
+            }
+
+            return;
+        }
+
+        if (_isMounted)
+        {
+            BeginClosing();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_shouldFocus || !_isMounted)
+        {
+            return;
+        }
+
+        _shouldFocus = false;
+        await _root.FocusAsync();
+    }
+
+    /// <summary>Fecha o painel. Disponível para o conteúdo pelo <c>CascadingValue</c>.</summary>
+    public async Task CloseAsync()
+    {
+        if (!Open)
+        {
+            return;
+        }
+
+        // Controlado: o pai devolve Open=false e o OnParametersSet inicia a saída.
+        if (OpenChanged.HasDelegate)
+        {
+            await OpenChanged.InvokeAsync(false);
+            return;
+        }
+
+        Open = false;
+        BeginClosing();
+        StateHasChanged();
+    }
+
+    private Task OverlayClicked() => CloseOnOverlayClick ? CloseAsync() : Task.CompletedTask;
+
+    private Task OnKeyDown(KeyboardEventArgs args) =>
+        args.Key == "Escape" ? CloseAsync() : Task.CompletedTask;
+
+    private void BeginClosing()
+    {
+        if (_closing is not null)
+        {
+            return;
+        }
+
+        _closing = new CancellationTokenSource();
+        _ = UnmountAfterTransitionAsync(_closing.Token);
+    }
+
+    /// <summary>Reabrir no meio da saída cancela o desmonte pendente.</summary>
+    private void CancelClosing()
+    {
+        _closing?.Cancel();
+        _closing?.Dispose();
+        _closing = null;
+    }
+
+    private async Task UnmountAfterTransitionAsync(CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(TransitionMilliseconds, token);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        _isMounted = false;
+        _closing?.Dispose();
+        _closing = null;
+
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => CancelClosing();
+}

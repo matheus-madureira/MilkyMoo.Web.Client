@@ -1,0 +1,53 @@
+﻿<div class="printed-label">
+    <h4 class="printed-label-product">@Product</h4>
+
+    <div class="printed-label-condition d-flex align-items-center justify-content-between">
+        <span class="printed-label-condition-name">@Print.Condition</span>
+        <span class="printed-label-weight">@Print.Weight</span>
+    </div>
+
+    <dl class="printed-label-fields">
+        <dt>VAL. ORIGINAL:</dt>
+        <dd>@Print.OriginalExpiresAt</dd>
+
+        <dt>RECEBIMENTO:</dt>
+        <dd>@Print.ReceivedAt</dd>
+
+        <dt>VALIDADE:</dt>
+        <dd>@Print.PrintedExpiresAt</dd>
+
+        <dt>MARCA/FORN.:</dt>
+        <dd>@Print.Brand</dd>
+
+        <dt>SIF:</dt>
+        <dd>@Print.Sif</dd>
+
+        <dt>LOTE:</dt>
+        <dd>@Print.Batch</dd>
+    </dl>
+
+    <div class="printed-label-issuer d-flex justify-content-between">
+        <div class="printed-label-issuer-text">
+            <p><span class="printed-label-key">RESP.:</span> @Print.Responsible</p>
+            <p>@Print.Company</p>
+            <p><span class="printed-label-key">CNPJ:</span> @Print.Cnpj</p>
+            <p><span class="printed-label-key">CEP:</span> @Print.Address</p>
+        </div>
+
+        <img class="printed-label-qrcode"
+             src="images/qrcode-sample.svg"
+             alt="QR code da etiqueta @Print.Code" />
+    </div>
+
+    <p class="printed-label-code">@Print.Code</p>
+</div>
+
+@code {
+    /// <summary>Nome do produto, impresso em destaque no topo da etiqueta.</summary>
+    [Parameter, EditorRequired]
+    public required string Product { get; set; }
+
+    /// <summary>Dados reproduzidos na etiqueta física.</summary>
+    [Parameter, EditorRequired]
+    public required LabelCard.LabelPrint Print { get; set; }
+}

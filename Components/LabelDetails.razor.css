@@ -1,0 +1,77 @@
+.label-details-breadcrumb {
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b6b6b;
+}
+
+.label-details-separator {
+    color: #c4c4c4;
+}
+
+.label-details-crumb.is-current {
+    color: #E2703A;
+    text-transform: lowercase;
+}
+
+.label-details-section {
+    padding-top: 26px;
+}
+
+.label-details-section-title {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #1d1d1b;
+}
+
+.associated-labels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.associated-label {
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.associated-label:hover,
+.associated-label.is-selected {
+    background-color: #f4f4f5;
+}
+
+/* Índice à esquerda, código centralizado e checkbox à direita, como na etiqueta impressa. */
+.associated-label-row {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 9px 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.associated-label-index {
+    font-size: 12px;
+    font-weight: 600;
+    color: #b0b0b0;
+}
+
+.associated-label-code {
+    justify-self: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d1d1b;
+}
+
+.associated-label-check {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    margin: 0;
+    accent-color: #E993A7;
+    cursor: pointer;
+}

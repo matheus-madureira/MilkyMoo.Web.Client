@@ -68,7 +68,43 @@
         string Storage,
         string Quantity,
         string OpenedAt,
-        string ExpiresAt);
+        string ExpiresAt)
+    {
+        /// <summary>Código público impresso na etiqueta, no formato <c>#RRGGBB</c>.</summary>
+        public string? Code { get; init; }
+
+        /// <summary>Categoria do produto, primeiro nível da trilha nos detalhes.</summary>
+        public string? Category { get; init; }
+
+        /// <summary>Subcategoria do produto, segundo nível da trilha nos detalhes.</summary>
+        public string? Subcategory { get; init; }
+
+        /// <summary>Etiquetas emitidas junto com esta.</summary>
+        public IReadOnlyList<AssociatedLabel> Associated { get; init; } = [];
+
+        /// <summary>Conteúdo reproduzido na pré-visualização da etiqueta física.</summary>
+        public LabelPrint? Print { get; init; }
+    }
+
+    /// <summary>Etiqueta emitida junto com a principal, exibida no bloco "Etiquetas associadas".</summary>
+    public sealed record AssociatedLabel(int Id, string Code);
+
+    /// <summary>Dados que aparecem na etiqueta física, independentes dos exibidos no card.</summary>
+    public sealed record LabelPrint(
+        string Code,
+        string Condition,
+        string Weight,
+        string OriginalExpiresAt,
+        string ReceivedAt,
+        string PrintedExpiresAt,
+        string Brand,
+        string Sif,
+        string Batch,
+        string Responsible,
+        string Company,
+        string Cnpj,
+        string Address,
+        bool ExpirationChanged);
 
     /// <summary>Etiqueta exibida no card.</summary>
     [Parameter, EditorRequired]

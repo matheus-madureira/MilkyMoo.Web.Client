@@ -41,13 +41,49 @@
                 <div class="labels-grid">
                     @foreach (LabelCard.PrintedLabel label in _visibleLabels)
                     {
-                        <LabelCard @key="label.Id" Label="label" />
+                        <LabelCard @key="label.Id" Label="label" OnDetails="() => OpenDetails(label)" />
                     }
                 </div>
             }
         </div>
     </div>
 </div>
+
+<Sheet @bind-Open="_isDetailsOpen"
+       Title="Detalhes da etiqueta"
+       Side="Sheet.SheetSide.Right"
+       FooterContent="@(HasExpirationWarning ? ExpirationWarning() : null)">
+    @if (_selectedLabel is not null)
+    {
+        <LabelDetails Label="_selectedLabel" />
+    }
+</Sheet>
+
+@* Aviso fixo no rodapé: precisa ficar visível sem depender do scroll do painel. *@
+@code {
+    private RenderFragment ExpirationWarning() =>
+    @<div class="labels-warning d-flex align-items-start">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="16"
+             height="16"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2"
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             class="labels-warning-icon lucide lucide-circle-alert-icon lucide-circle-alert"
+             aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" x2="12" y1="8" y2="12" />
+            <line x1="12" x2="12.01" y1="16" y2="16" />
+        </svg>
+
+        <span>
+            Esta etiqueta teve a data de validade modificada respeitando a data de validade original do produto.
+        </span>
+    </div>;
+}
 
 @code {
     private const string DateFormat = "dd/MM/yyyy";
@@ -59,10 +95,25 @@
     private LabelFilters.LabelFilterState _filters = LabelFilters.LabelFilterState.Empty;
     private int _pageSize = PageSizes[0];
 
+    private LabelCard.PrintedLabel? _selectedLabel;
+    private bool _isDetailsOpen;
+
+    private bool HasExpirationWarning => _selectedLabel?.Print?.ExpirationChanged == true;
+
     protected override async Task OnInitializedAsync()
     {
         _labels = await Http.GetFromJsonAsync<LabelCard.PrintedLabel[]>("sample-data/labels.json");
         ApplyFilters();
+    }
+
+    /// <summary>
+    /// A etiqueta selecionada não é limpa ao fechar: manter o conteúdo evita o painel piscar vazio
+    /// durante a animação de saída.
+    /// </summary>
+    private void OpenDetails(LabelCard.PrintedLabel label)
+    {
+        _selectedLabel = label;
+        _isDetailsOpen = true;
     }
 
     private void OnFiltersChanged(LabelFilters.LabelFilterState filters)

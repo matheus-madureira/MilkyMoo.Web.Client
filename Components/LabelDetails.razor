@@ -1,0 +1,83 @@
+﻿<nav class="label-details-breadcrumb d-flex align-items-center flex-wrap" aria-label="Trilha do produto">
+    @if (Label.Category is not null)
+    {
+        <span class="label-details-crumb">@Label.Category</span>
+        <span class="label-details-separator" aria-hidden="true">›</span>
+    }
+
+    @if (Label.Subcategory is not null)
+    {
+        <span class="label-details-crumb">@Label.Subcategory</span>
+        <span class="label-details-separator" aria-hidden="true">›</span>
+    }
+
+    <span class="label-details-crumb is-current" aria-current="page">@Label.Product</span>
+</nav>
+
+@if (Label.Associated.Count > 0)
+{
+    <section class="label-details-section">
+        <h3 class="label-details-section-title">Etiquetas associadas</h3>
+
+        <ul class="associated-labels">
+            @for (int index = 0; index < Label.Associated.Count; index++)
+            {
+                LabelCard.AssociatedLabel associated = Label.Associated[index];
+                string position = (index + 1).ToString("00");
+
+                <li @key="associated.Id" class="associated-label @(_selected.Contains(associated.Id) ? "is-selected" : string.Empty)">
+                    <label class="associated-label-row">
+                        <span class="associated-label-index">@position</span>
+                        <span class="associated-label-code">@associated.Code</span>
+
+                        <input type="checkbox"
+                               class="associated-label-check"
+                               checked="@_selected.Contains(associated.Id)"
+                               aria-label="Selecionar etiqueta @associated.Code"
+                               @onchange="() => Toggle(associated.Id)" />
+                    </label>
+                </li>
+            }
+        </ul>
+    </section>
+}
+
+@if (Label.Print is LabelCard.LabelPrint print)
+{
+    <section class="label-details-section">
+        <h3 class="label-details-section-title">Etiqueta impressa</h3>
+
+        <PrintedLabelPreview Product="@Label.Product" Print="print" />
+    </section>
+}
+
+@code {
+    private HashSet<int> _selected = [];
+
+    /// <summary>Etiqueta exibida no painel de detalhes.</summary>
+    [Parameter, EditorRequired]
+    public required LabelCard.PrintedLabel Label { get; set; }
+
+    /// <summary>Disparado quando a seleção de etiquetas associadas muda.</summary>
+    [Parameter]
+    public EventCallback<IReadOnlySet<int>> OnSelectionChanged { get; set; }
+
+    /// <summary>Trocar de etiqueta zera a seleção: os ids pertencem a outra etiqueta-mãe.</summary>
+    protected override void OnParametersSet()
+    {
+        if (_selected.Count > 0 && !Label.Associated.Any(associated => _selected.Contains(associated.Id)))
+        {
+            _selected = [];
+        }
+    }
+
+    private Task Toggle(int id)
+    {
+        if (!_selected.Add(id))
+        {
+            _selected.Remove(id);
+        }
+
+        return OnSelectionChanged.InvokeAsync(_selected);
+    }
+}

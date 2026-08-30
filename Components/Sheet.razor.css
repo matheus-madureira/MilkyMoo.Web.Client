@@ -1,0 +1,205 @@
+/* Overlay + painel ocupam a tela inteira, acima do z-index padrão do Bootstrap (1050 é o do modal). */
+.sheet-root {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    outline: none;
+}
+
+.sheet-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.sheet-overlay[data-state="open"] {
+    animation: sheet-overlay-in 0.22s ease both;
+}
+
+.sheet-overlay[data-state="closed"] {
+    animation: sheet-overlay-out 0.22s ease both;
+}
+
+/* O painel é montado já com data-state="open": a animação dispara sozinha na inserção do nó. */
+.sheet-content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+    box-shadow: 0 10px 40px -8px rgba(0, 0, 0, 0.25);
+}
+
+.sheet-right {
+    inset: 0 0 0 auto;
+    width: min(420px, 100vw);
+}
+
+.sheet-left {
+    inset: 0 auto 0 0;
+    width: min(420px, 100vw);
+}
+
+.sheet-top {
+    inset: 0 0 auto 0;
+    max-height: 90dvh;
+}
+
+.sheet-bottom {
+    inset: auto 0 0 0;
+    max-height: 90dvh;
+}
+
+.sheet-right[data-state="open"] {
+    animation: sheet-in-right 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-right[data-state="closed"] {
+    animation: sheet-out-right 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-left[data-state="open"] {
+    animation: sheet-in-left 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-left[data-state="closed"] {
+    animation: sheet-out-left 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-top[data-state="open"] {
+    animation: sheet-in-top 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-top[data-state="closed"] {
+    animation: sheet-out-top 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-bottom[data-state="open"] {
+    animation: sheet-in-bottom 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-bottom[data-state="closed"] {
+    animation: sheet-out-bottom 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
+}
+
+.sheet-header {
+    flex-shrink: 0;
+    gap: 12px;
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid #ececec;
+}
+
+.sheet-heading {
+    min-width: 0;
+}
+
+.sheet-title {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #1d1d1b;
+    margin: 0;
+}
+
+.sheet-description {
+    margin: 4px 0 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #9a9a97;
+}
+
+.sheet-close {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: none;
+    color: #1d1d1b;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sheet-close:hover {
+    background-color: #FFF5F7;
+    color: #E993A7;
+    cursor: pointer;
+}
+
+/* Única região rolável do painel: cabeçalho e rodapé permanecem fixos. */
+.sheet-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 18px 20px 24px;
+}
+
+.sheet-footer {
+    flex-shrink: 0;
+    padding: 14px 20px 18px;
+    border-top: 1px solid #ececec;
+}
+
+@media (max-width: 480px) {
+    .sheet-right,
+    .sheet-left {
+        width: 100vw;
+    }
+}
+
+@keyframes sheet-overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes sheet-overlay-out {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+@keyframes sheet-in-right {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+
+@keyframes sheet-out-right {
+    from { transform: translateX(0); }
+    to   { transform: translateX(100%); }
+}
+
+@keyframes sheet-in-left {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }
+}
+
+@keyframes sheet-out-left {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+}
+
+@keyframes sheet-in-top {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes sheet-out-top {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-100%); }
+}
+
+@keyframes sheet-in-bottom {
+    from { transform: translateY(100%); }
+    to   { transform: translateY(0); }
+}
+
+@keyframes sheet-out-bottom {
+    from { transform: translateY(0); }
+    to   { transform: translateY(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sheet-overlay,
+    .sheet-content {
+        animation-duration: 0.01ms !important;
+    }
+}

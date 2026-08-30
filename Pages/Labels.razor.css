@@ -114,3 +114,18 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }
+
+/* Aviso de validade alterada, exibido no rodapé do painel de detalhes. */
+.labels-warning {
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.45;
+    color: #6b6b6b;
+}
+
+.labels-warning-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #E03131;
+}

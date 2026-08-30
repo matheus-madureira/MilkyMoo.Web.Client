@@ -1,122 +1,405 @@
 [
   {
     "id": 1,
+    "code": "#4736D5",
     "owner": "Felipe Mattioli",
     "product": "Pote de Avelã Nutella",
     "state": "Aberto",
     "storage": "Temp. Ambiente",
     "quantity": "3KG",
     "openedAt": "26/08/2026",
-    "expiresAt": "10/09/2026"
+    "expiresAt": "10/09/2026",
+    "category": "Mercearia",
+    "subcategory": "Mercearia - Doces",
+    "associated": [
+      { "id": 101, "code": "#4736D5" },
+      { "id": 102, "code": "#62B1B6" },
+      { "id": 103, "code": "#26D702" }
+    ],
+    "print": {
+      "code": "#000001",
+      "condition": "TEMP. AMBIENTE",
+      "weight": "3000 g",
+      "originalExpiresAt": "10/12/2026",
+      "receivedAt": "12/08/2026",
+      "printedExpiresAt": "10/09/2026",
+      "brand": "NUTELLA",
+      "sif": "3123",
+      "batch": "FXW24",
+      "responsible": "FELIPE MATTIOLI",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": true
+    }
   },
   {
     "id": 2,
+    "code": "#62B1B6",
     "owner": "Beatriz Nogueira",
     "product": "Calda de Morango",
     "state": "Aberto",
     "storage": "Refrigerado",
     "quantity": "1,5KG",
     "openedAt": "24/08/2026",
-    "expiresAt": "03/09/2026"
+    "expiresAt": "03/09/2026",
+    "category": "Mercearia",
+    "subcategory": "Mercearia - Caldas",
+    "associated": [
+      { "id": 201, "code": "#62B1B6" },
+      { "id": 202, "code": "#8AD1C2" }
+    ],
+    "print": {
+      "code": "#000002",
+      "condition": "REFRIGERADO",
+      "weight": "1500 g",
+      "originalExpiresAt": "03/09/2026",
+      "receivedAt": "10/08/2026",
+      "printedExpiresAt": "03/09/2026",
+      "brand": "DOCE VALE",
+      "sif": "2874",
+      "batch": "KPL08",
+      "responsible": "BEATRIZ NOGUEIRA",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   },
   {
     "id": 3,
+    "code": "#26D702",
     "owner": "Rafael Andrade",
     "product": "Leite Condensado",
     "state": "Fechado",
     "storage": "Temp. Ambiente",
     "quantity": "5KG",
     "openedAt": "20/08/2026",
-    "expiresAt": "18/02/2027"
+    "expiresAt": "18/02/2027",
+    "category": "Laticínios",
+    "subcategory": "Laticínios - Leites",
+    "associated": [
+      { "id": 301, "code": "#26D702" },
+      { "id": 302, "code": "#1FA97B" },
+      { "id": 303, "code": "#7CC576" }
+    ],
+    "print": {
+      "code": "#000003",
+      "condition": "TEMP. AMBIENTE",
+      "weight": "5000 g",
+      "originalExpiresAt": "18/02/2027",
+      "receivedAt": "20/07/2026",
+      "printedExpiresAt": "18/02/2027",
+      "brand": "MOÇA",
+      "sif": "1290",
+      "batch": "LTC55",
+      "responsible": "RAFAEL ANDRADE",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   },
   {
     "id": 4,
+    "code": "#C94F7C",
     "owner": "Camila Duarte",
     "product": "Creme de Leite Fresco",
     "state": "Aberto",
     "storage": "Refrigerado",
     "quantity": "2L",
     "openedAt": "26/08/2026",
-    "expiresAt": "31/08/2026"
+    "expiresAt": "31/08/2026",
+    "category": "Laticínios",
+    "subcategory": "Laticínios - Cremes",
+    "associated": [
+      { "id": 401, "code": "#C94F7C" },
+      { "id": 402, "code": "#E993A7" }
+    ],
+    "print": {
+      "code": "#000004",
+      "condition": "REFRIGERADO",
+      "weight": "2000 g",
+      "originalExpiresAt": "12/09/2026",
+      "receivedAt": "24/08/2026",
+      "printedExpiresAt": "31/08/2026",
+      "brand": "ITAMBÉ",
+      "sif": "4410",
+      "batch": "CLF19",
+      "responsible": "CAMILA DUARTE",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": true
+    }
   },
   {
     "id": 5,
+    "code": "#3B7DD8",
     "owner": "Lucas Ferreira",
     "product": "Polpa de Açaí",
     "state": "Fechado",
     "storage": "Congelado",
     "quantity": "10KG",
     "openedAt": "12/08/2026",
-    "expiresAt": "12/02/2027"
+    "expiresAt": "12/02/2027",
+    "category": "Congelados",
+    "subcategory": "Congelados - Frutas",
+    "associated": [
+      { "id": 501, "code": "#3B7DD8" },
+      { "id": 502, "code": "#5AA9E6" },
+      { "id": 503, "code": "#9BC4F2" },
+      { "id": 504, "code": "#2C5F9E" }
+    ],
+    "print": {
+      "code": "#000005",
+      "condition": "CONGELADO",
+      "weight": "10000 g",
+      "originalExpiresAt": "12/02/2027",
+      "receivedAt": "05/08/2026",
+      "printedExpiresAt": "12/02/2027",
+      "brand": "AÇAÍ NORTE",
+      "sif": "5521",
+      "batch": "ACI73",
+      "responsible": "LUCAS FERREIRA",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   },
   {
     "id": 6,
+    "code": "#F2A65A",
     "owner": "Marina Salles",
     "product": "Base de Sorvete Baunilha",
     "state": "Aberto",
     "storage": "Refrigerado",
     "quantity": "4L",
     "openedAt": "25/08/2026",
-    "expiresAt": "01/09/2026"
+    "expiresAt": "01/09/2026",
+    "category": "Congelados",
+    "subcategory": "Congelados - Sorvetes",
+    "associated": [
+      { "id": 601, "code": "#F2A65A" },
+      { "id": 602, "code": "#FFB347" }
+    ],
+    "print": {
+      "code": "#000006",
+      "condition": "REFRIGERADO",
+      "weight": "4000 g",
+      "originalExpiresAt": "01/09/2026",
+      "receivedAt": "18/08/2026",
+      "printedExpiresAt": "01/09/2026",
+      "brand": "BAUNILHA REAL",
+      "sif": "6033",
+      "batch": "BVN41",
+      "responsible": "MARINA SALLES",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   },
   {
     "id": 7,
+    "code": "#8E5B3C",
     "owner": "Felipe Mattioli",
     "product": "Chocolate Meio Amargo",
     "state": "Aberto",
     "storage": "Temp. Ambiente",
     "quantity": "2,5KG",
     "openedAt": "18/08/2026",
-    "expiresAt": "18/11/2026"
+    "expiresAt": "18/11/2026",
+    "category": "Mercearia",
+    "subcategory": "Mercearia - Chocolates",
+    "associated": [
+      { "id": 701, "code": "#8E5B3C" },
+      { "id": 702, "code": "#B07D5A" },
+      { "id": 703, "code": "#5C3A25" }
+    ],
+    "print": {
+      "code": "#000007",
+      "condition": "TEMP. AMBIENTE",
+      "weight": "2500 g",
+      "originalExpiresAt": "18/12/2026",
+      "receivedAt": "01/08/2026",
+      "printedExpiresAt": "18/11/2026",
+      "brand": "CACAU FINO",
+      "sif": "7188",
+      "batch": "CHC62",
+      "responsible": "FELIPE MATTIOLI",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": true
+    }
   },
   {
     "id": 8,
+    "code": "#D64545",
     "owner": "Beatriz Nogueira",
     "product": "Morango Congelado",
     "state": "Fechado",
     "storage": "Congelado",
     "quantity": "6KG",
     "openedAt": "10/08/2026",
-    "expiresAt": "10/12/2026"
+    "expiresAt": "10/12/2026",
+    "category": "Congelados",
+    "subcategory": "Congelados - Frutas",
+    "associated": [
+      { "id": 801, "code": "#D64545" },
+      { "id": 802, "code": "#F27070" }
+    ],
+    "print": {
+      "code": "#000008",
+      "condition": "CONGELADO",
+      "weight": "6000 g",
+      "originalExpiresAt": "10/12/2026",
+      "receivedAt": "01/08/2026",
+      "printedExpiresAt": "10/12/2026",
+      "brand": "FRUTA VIVA",
+      "sif": "8206",
+      "batch": "MRG27",
+      "responsible": "BEATRIZ NOGUEIRA",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   },
   {
     "id": 9,
+    "code": "#A3B54A",
     "owner": "Rafael Andrade",
     "product": "Paçoca Triturada",
     "state": "Aberto",
     "storage": "Temp. Ambiente",
     "quantity": "1KG",
     "openedAt": "22/08/2026",
-    "expiresAt": "22/09/2026"
+    "expiresAt": "22/09/2026",
+    "category": "Mercearia",
+    "subcategory": "Mercearia - Doces",
+    "associated": [
+      { "id": 901, "code": "#A3B54A" },
+      { "id": 902, "code": "#C7D66B" },
+      { "id": 903, "code": "#7E8F32" }
+    ],
+    "print": {
+      "code": "#000009",
+      "condition": "TEMP. AMBIENTE",
+      "weight": "1000 g",
+      "originalExpiresAt": "22/09/2026",
+      "receivedAt": "12/08/2026",
+      "printedExpiresAt": "22/09/2026",
+      "brand": "SANTA HELENA",
+      "sif": "9014",
+      "batch": "PCC90",
+      "responsible": "RAFAEL ANDRADE",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   },
   {
     "id": 10,
+    "code": "#4FA3A5",
     "owner": "Camila Duarte",
     "product": "Leite Integral",
     "state": "Aberto",
     "storage": "Refrigerado",
     "quantity": "12L",
     "openedAt": "27/08/2026",
-    "expiresAt": "02/09/2026"
+    "expiresAt": "02/09/2026",
+    "category": "Laticínios",
+    "subcategory": "Laticínios - Leites",
+    "associated": [
+      { "id": 1001, "code": "#4FA3A5" },
+      { "id": 1002, "code": "#6FC6C8" }
+    ],
+    "print": {
+      "code": "#000010",
+      "condition": "REFRIGERADO",
+      "weight": "12000 g",
+      "originalExpiresAt": "02/09/2026",
+      "receivedAt": "25/08/2026",
+      "printedExpiresAt": "02/09/2026",
+      "brand": "PIRACANJUBA",
+      "sif": "1077",
+      "batch": "LTI34",
+      "responsible": "CAMILA DUARTE",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   },
   {
     "id": 11,
+    "code": "#B5651D",
     "owner": "Lucas Ferreira",
     "product": "Cobertura de Caramelo",
     "state": "Fechado",
     "storage": "Temp. Ambiente",
     "quantity": "3KG",
     "openedAt": "15/08/2026",
-    "expiresAt": "15/01/2027"
+    "expiresAt": "15/01/2027",
+    "category": "Mercearia",
+    "subcategory": "Mercearia - Caldas",
+    "associated": [
+      { "id": 1101, "code": "#B5651D" },
+      { "id": 1102, "code": "#D98C3F" },
+      { "id": 1103, "code": "#8A4A12" }
+    ],
+    "print": {
+      "code": "#000011",
+      "condition": "TEMP. AMBIENTE",
+      "weight": "3000 g",
+      "originalExpiresAt": "15/03/2027",
+      "receivedAt": "20/07/2026",
+      "printedExpiresAt": "15/01/2027",
+      "brand": "CARAMELO OURO",
+      "sif": "1163",
+      "batch": "CRM11",
+      "responsible": "LUCAS FERREIRA",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": true
+    }
   },
   {
     "id": 12,
+    "code": "#7A5AF8",
     "owner": "Marina Salles",
     "product": "Massa de Waffle",
     "state": "Aberto",
     "storage": "Refrigerado",
     "quantity": "2KG",
     "openedAt": "26/08/2026",
-    "expiresAt": "30/08/2026"
+    "expiresAt": "30/08/2026",
+    "category": "Padaria",
+    "subcategory": "Padaria - Massas",
+    "associated": [
+      { "id": 1201, "code": "#7A5AF8" },
+      { "id": 1202, "code": "#A18CF9" }
+    ],
+    "print": {
+      "code": "#000012",
+      "condition": "REFRIGERADO",
+      "weight": "2000 g",
+      "originalExpiresAt": "30/08/2026",
+      "receivedAt": "22/08/2026",
+      "printedExpiresAt": "30/08/2026",
+      "brand": "MASSA BOA",
+      "sif": "1245",
+      "batch": "WFL06",
+      "responsible": "MARINA SALLES",
+      "company": "SUFLEX",
+      "cnpj": "01.010.100/7000-10",
+      "address": "05435-030 RUA PURPURINA, 400, SÃO PAULO, SP",
+      "expirationChanged": false
+    }
   }
 ]

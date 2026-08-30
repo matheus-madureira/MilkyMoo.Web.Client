@@ -58,6 +58,13 @@ Sempre versione (`1.0.0`) além de `latest` — assim é possível fazer rollbac
 - **Camada de restore separada**: `COPY MilkyMoo.csproj` antes do resto do código,
   então alterar um `.razor` não refaz o `dotnet restore`.
 - **Cache de NuGet via BuildKit** (`--mount=type=cache`): não incha a imagem.
+- **Workload `wasm-tools`**: habilita o *relink* nativo do runtime no `publish`,
+  encolhendo o `_framework`. O relink é feito pelo Emscripten, que precisa de
+  **Python** — por isso o `apt-get install python3` e o symlink `python`, já que
+  é esse o nome que o `emcc` procura no `PATH`. Sem isso o build falha com
+  `unable to find python in $PATH`.
+  Localmente o workload é opcional: sem ele o `dotnet publish` apenas avisa e
+  gera um `_framework` maior, sem quebrar.
 - **`gzip_static on`**: o publish do Blazor já emite `.gz` ao lado de cada asset;
   o nginx entrega o arquivo pronto em vez de comprimir a cada request.
   (Os `.br` também vão na imagem, mas exigem o módulo `ngx_brotli`, ausente na
@@ -80,6 +87,10 @@ Sempre versione (`1.0.0`) além de `latest` — assim é possível fazer rollbac
   find . -name '*.map' -delete
   find . -type f \( -name '*.css' -o -name '*.js' \) ! -name '*.min.css' ! -name '*.min.js' -delete
   ```
+- **Imagens otimizadas** (4.4 MB → 96 KB): o `avatar-example.jpg` era 6220×6220
+  para exibir em 40×40 (agora 160×160); o `favicon.svg` era um PNG 606×606
+  embutido em base64 (agora 192×192); os ícones PNG foram quantizados para 256
+  cores. Ao trocar qualquer asset, confira o tamanho antes de commitar.
 
 ## Atrás de um proxy reverso (Traefik / Caddy / nginx)
 

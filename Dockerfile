@@ -7,6 +7,14 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
+# O relink nativo e feito pelo Emscripten, que precisa de Python — a imagem
+# do SDK nao traz. `python` (sem o 3) e o nome que o emcc procura no PATH.
+RUN apt-get update     && apt-get install -y --no-install-recommends python3     && ln -sf /usr/bin/python3 /usr/bin/python     && rm -rf /var/lib/apt/lists/*
+
+# wasm-tools habilita o relink nativo do runtime durante o publish, o que
+# reduz bastante o _framework. Camada propria: so refaz se o SDK mudar.
+RUN dotnet workload install wasm-tools --skip-sign-check
+
 # Copia so o csproj primeiro: a camada de restore so e invalidada quando as
 # dependencias mudam, nao a cada alteracao de codigo.
 COPY MilkyMoo.csproj ./

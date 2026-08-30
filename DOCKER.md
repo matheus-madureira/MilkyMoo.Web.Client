@@ -39,18 +39,32 @@ docker run --rm -p 8080:8080 milkymoo:local
 ```bash
 docker login
 
-# 1. Ajuste `image:` no docker-compose.yml para <seu-usuario>/milkymoo
+# 1. O `image:` do docker-compose.yml já aponta para blackadm7/milkymoo
 # 2. Build multi-arquitetura (amd64 + arm64) e push em um passo:
 docker buildx create --use --name milkymoo-builder   # só na primeira vez
 
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t <seu-usuario>/milkymoo:1.0.0 \
-  -t <seu-usuario>/milkymoo:latest \
+  -t blackadm7/milkymoo:1.0.0 \
+  -t blackadm7/milkymoo:latest \
   --push .
 ```
 
 Sempre versione (`1.0.0`) além de `latest` — assim é possível fazer rollback.
+
+No Windows, use o script em vez de colar o comando multi-linha (a continuação
+do PowerShell é crase, não `\`, e uma colagem quebrada executa cada pedaço como
+um comando separado):
+
+```powershell
+.\scripts\publish.ps1 1.0.0            # build multi-arch + push (versão e latest)
+.\scripts\publish.ps1 1.0.0 -NoPush    # só valida o build, sem publicar
+```
+
+Se o push falhar com `insufficient_scope: authorization failed`, o token do
+`docker login` não tem permissão de escrita: gere um PAT com **Read, Write,
+Delete** em https://app.docker.com/settings/personal-access-tokens e refaça
+`docker logout && docker login -u <usuario>`.
 
 ## Decisões de projeto
 

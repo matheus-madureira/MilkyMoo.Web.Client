@@ -1,7 +1,7 @@
 services:
   milkymoo:
-    # Troque "seu-usuario" pelo seu usuario do Docker Hub antes de publicar.
-    image: seu-usuario/milkymoo:${TAG:-latest}
+    # Publicado em https://hub.docker.com/r/blackadm7/milkymoo
+    image: blackadm7/milkymoo:${TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile

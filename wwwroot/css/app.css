@@ -87,3 +87,32 @@ a {
 .loading-progress-text:after {
     content: var(--blazor-load-percentage-text, "Loading");
 }
+
+/*
+ * Impressão: na tela o app inteiro vive dentro de uma altura fixa com overflow hidden, o que faria o browser
+ * imprimir uma página em branco. Aqui essas travas caem e só a .print-area sobra na folha.
+ *
+ * Este bloco cuida apenas de esconder o app. A geometria da .print-area mora no CSS isolado da página que a
+ * usa: o seletor com escopo (.print-area[b-xxxxx]) tem especificidade maior e venceria uma regra daqui.
+ */
+@media print {
+    html, body {
+        height: auto;
+        overflow: visible;
+        background-color: #ffffff;
+    }
+
+    /* Esconde por visibilidade, e não por display: não desmonta os contêineres em flex do layout. */
+    body * {
+        visibility: hidden;
+    }
+
+    .print-area,
+    .print-area * {
+        visibility: visible;
+    }
+
+    #blazor-error-ui {
+        display: none;
+    }
+}

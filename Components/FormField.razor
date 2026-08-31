@@ -1,0 +1,74 @@
+﻿<div class="form-field">
+    <label class="form-field-label" for="@FieldId">
+        @Label
+
+        @if (Required)
+        {
+            <span class="form-field-required" aria-hidden="true">*</span>
+        }
+    </label>
+
+    @* O ícone é desenhado sobre o controle; o recuo do texto vem da classe has-icon. *@
+    <div class="form-field-control @(Icon is not null ? "has-icon" : string.Empty)">
+        @if (Icon is not null)
+        {
+            <span class="form-field-icon" aria-hidden="true">@Icon</span>
+        }
+
+        @ChildContent?.Invoke(this)
+    </div>
+
+    @if (Error is not null)
+    {
+        <p class="form-field-error" id="@ErrorId" role="alert">@Error</p>
+    }
+    else if (Hint is not null)
+    {
+        <p class="form-field-hint" id="@HintId">@Hint</p>
+    }
+</div>
+
+@code {
+    /// <summary>Identificador do controle, usado no <c>for</c> do rótulo. Gerado quando omitido.</summary>
+    [Parameter]
+    public string FieldId { get; set; } = $"field-{Guid.NewGuid():N}";
+
+    /// <summary>Texto do rótulo exibido acima do controle.</summary>
+    [Parameter, EditorRequired]
+    public required string Label { get; set; }
+
+    /// <summary>Indica se o campo é obrigatório. Acrescenta o asterisco ao rótulo.</summary>
+    [Parameter]
+    public bool Required { get; set; }
+
+    /// <summary>Mensagem de erro exibida abaixo do controle. Tem prioridade sobre a dica.</summary>
+    [Parameter]
+    public string? Error { get; set; }
+
+    /// <summary>Texto auxiliar exibido abaixo do controle quando não há erro.</summary>
+    [Parameter]
+    public string? Hint { get; set; }
+
+    /// <summary>Ícone decorativo desenhado dentro do controle, à esquerda.</summary>
+    [Parameter]
+    public RenderFragment? Icon { get; set; }
+
+    /// <summary>
+    /// O controle em si: <c>input</c>, <c>select</c> ou equivalente. Recebe o próprio campo como contexto,
+    /// para que o controle use <c>FieldId</c>, <c>DescribedBy</c> e <c>HasError</c> sem duplicar a lógica.
+    /// </summary>
+    [Parameter]
+    public RenderFragment<FormField>? ChildContent { get; set; }
+
+    /// <summary>Indica se o campo está em erro. Serve ao <c>aria-invalid</c> do controle.</summary>
+    public bool HasError => Error is not null;
+
+    /// <summary>Id da mensagem de erro, para o <c>aria-describedby</c> do controle.</summary>
+    public string ErrorId => $"{FieldId}-error";
+
+    /// <summary>Id da dica, para o <c>aria-describedby</c> do controle.</summary>
+    public string HintId => $"{FieldId}-hint";
+
+    /// <summary>Valor do <c>aria-describedby</c> do controle, ou <c>null</c> quando não há texto auxiliar.</summary>
+    public string? DescribedBy => Error is not null ? ErrorId : Hint is not null ? HintId : null;
+}

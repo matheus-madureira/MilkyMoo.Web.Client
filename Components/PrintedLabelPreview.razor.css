@@ -43,10 +43,12 @@
     font-weight: 700;
 }
 
+/* A etiqueta é sempre impressa em caixa alta; o valor digitado no formulário é preservado como veio. */
 .printed-label-fields dd {
     margin: 0;
     text-align: right;
     font-weight: 700;
+    text-transform: uppercase;
 }
 
 /* Régua mais grossa antes do bloco do emissor, como na etiqueta impressa. */
@@ -85,4 +87,65 @@
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.02em;
+}
+
+/*
+ * Na folha a etiqueta deixa de ser um cartão e passa a ocupar o material inteiro (6 × 6 cm por padrão),
+ * com a tipografia em milímetros. A .print-area é quem define a caixa; aqui só a preenchemos.
+ */
+@media print {
+    .printed-label {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        padding: 2mm;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        box-sizing: border-box;
+        line-height: 1.25;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .printed-label-product {
+        font-size: 4mm;
+    }
+
+    .printed-label-condition {
+        padding: 1.2mm 0 1.4mm;
+        font-size: 2.2mm;
+    }
+
+    .printed-label-fields {
+        padding: 1.4mm 0;
+        gap: 0.4mm 3mm;
+        font-size: 2.2mm;
+    }
+
+    .printed-label-issuer {
+        gap: 2mm;
+        margin-top: auto;
+        padding-top: 1.4mm;
+    }
+
+    .printed-label-issuer-text {
+        font-size: 1.8mm;
+        line-height: 1.4;
+    }
+
+    /* Zona quieta de 4 módulos: o padding branco em volta do QR não pode ser cortado pela leitura. */
+    .printed-label-qrcode {
+        width: 18mm;
+        height: 18mm;
+        padding: 2mm;
+        background-color: #ffffff;
+        box-sizing: border-box;
+    }
+
+    .printed-label-code {
+        margin-top: 1.2mm;
+        font-size: 2.4mm;
+    }
 }

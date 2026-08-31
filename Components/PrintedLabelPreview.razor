@@ -6,21 +6,31 @@
         <span class="printed-label-weight">@Print.Weight</span>
     </div>
 
+    @* Rótulo sem valor não vai para a etiqueta: o par dt/dd some junto. *@
     <dl class="printed-label-fields">
         <dt>VAL. ORIGINAL:</dt>
         <dd>@Print.OriginalExpiresAt</dd>
 
-        <dt>RECEBIMENTO:</dt>
-        <dd>@Print.ReceivedAt</dd>
+        @if (!string.IsNullOrWhiteSpace(Print.HandledAt))
+        {
+            <dt>MANIPULAÇÃO:</dt>
+            <dd>@Print.HandledAt</dd>
+        }
 
-        <dt>VALIDADE:</dt>
-        <dd>@Print.PrintedExpiresAt</dd>
+        @if (!string.IsNullOrWhiteSpace(Print.PrintedExpiresAt))
+        {
+            <dt>VALIDADE:</dt>
+            <dd>@Print.PrintedExpiresAt</dd>
+        }
 
         <dt>MARCA/FORN.:</dt>
         <dd>@Print.Brand</dd>
 
-        <dt>SIF:</dt>
-        <dd>@Print.Sif</dd>
+        @if (!string.IsNullOrWhiteSpace(Print.Sif))
+        {
+            <dt>SIF:</dt>
+            <dd>@Print.Sif</dd>
+        }
 
         <dt>LOTE:</dt>
         <dd>@Print.Batch</dd>

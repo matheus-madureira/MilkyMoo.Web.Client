@@ -89,16 +89,20 @@
     /// <summary>Etiqueta emitida junto com a principal, exibida no bloco "Etiquetas associadas".</summary>
     public sealed record AssociatedLabel(int Id, string Code);
 
-    /// <summary>Dados que aparecem na etiqueta física, independentes dos exibidos no card.</summary>
+    /// <summary>
+    /// Dados que aparecem na etiqueta física, independentes dos exibidos no card.
+    /// Os campos anuláveis só existem depois que o produto é aberto (ou quando se aplicam):
+    /// na etiqueta lacrada não há manipulação nem validade final, e o SIF é condicional ao produto.
+    /// </summary>
     public sealed record LabelPrint(
         string Code,
         string Condition,
         string Weight,
         string OriginalExpiresAt,
-        string ReceivedAt,
-        string PrintedExpiresAt,
+        string? HandledAt,
+        string? PrintedExpiresAt,
         string Brand,
-        string Sif,
+        string? Sif,
         string Batch,
         string Responsible,
         string Company,

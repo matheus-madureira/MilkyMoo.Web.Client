@@ -1,0 +1,510 @@
+﻿@using System.Globalization
+@inject HttpClient Http
+
+<form class="print-form" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
+    <section class="print-form-section">
+        <h2 class="print-form-section-title">Impressão</h2>
+
+        <div class="print-form-grid">
+            <FormField FieldId="print-point"
+                       Label="Ponto de impressão"
+                       Required="true"
+                       Error="@ErrorOf(PointField)">
+                <Icon>
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         width="18"
+                         height="18"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="lucide lucide-printer-icon lucide-printer">
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6" />
+                        <rect x="6" y="14" width="12" height="8" rx="1" />
+                    </svg>
+                </Icon>
+
+                <ChildContent Context="field">
+                    <select id="@field.FieldId"
+                            aria-required="true"
+                            aria-invalid="@(field.HasError ? "true" : "false")"
+                            aria-describedby="@field.DescribedBy"
+                            @ref="_pointRef"
+                            value="@_pointId"
+                            @onchange="OnPointChanged">
+                        <option value="">Selecione um ponto de impressão</option>
+
+                        @foreach (PrintPoint point in _points)
+                        {
+                            <option value="@point.Id">@point.Display</option>
+                        }
+                    </select>
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-size"
+                       Label="Medida"
+                       Required="true"
+                       Hint="A medida do ponto escolhido vem preenchida, mas pode ser trocada.">
+                <ChildContent Context="field">
+                    <select id="@field.FieldId"
+                            aria-required="true"
+                            aria-describedby="@field.DescribedBy"
+                            value="@Size.Key"
+                            @onchange="OnSizeSelected">
+                        @foreach (LabelSize size in Sizes)
+                        {
+                            <option value="@size.Key">@size.Display</option>
+                        }
+                    </select>
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-copies"
+                       Label="Cópias"
+                       Required="true"
+                       Error="@ErrorOf(CopiesField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="number"
+                           min="@MinCopies"
+                           max="@MaxCopies"
+                           step="1"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_copiesRef"
+                           value="@_copies"
+                           @onchange="OnCopiesChanged" />
+                </ChildContent>
+            </FormField>
+        </div>
+    </section>
+
+    <section class="print-form-section">
+        <h2 class="print-form-section-title">Informações adicionais</h2>
+
+        <div class="print-form-grid">
+            <FormField FieldId="print-original-expires-at"
+                       Label="Validade original"
+                       Required="true"
+                       Error="@ErrorOf(OriginalExpiresAtField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="date"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_originalExpiresAtRef"
+                           value="@ToInputDate(Print.OriginalExpiresAt)"
+                           @onchange="OnOriginalExpiresAtChanged" />
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-handled-at"
+                       Label="Data/hora de manipulação"
+                       Required="@_requiresHandledAt"
+                       Error="@ErrorOf(HandledAtField)"
+                       Hint="@(_requiresHandledAt ? null : "Deixe em branco enquanto a embalagem estiver lacrada.")">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="datetime-local"
+                           aria-required="@(_requiresHandledAt ? "true" : "false")"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_handledAtRef"
+                           value="@ToInputDateTime(Print.HandledAt)"
+                           @onchange="OnHandledAtChanged" />
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-responsible"
+                       Label="Responsável"
+                       Required="true"
+                       Error="@ErrorOf(ResponsibleField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="text"
+                           autocomplete="off"
+                           placeholder="Quem manipulou o produto"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_responsibleRef"
+                           value="@Print.Responsible"
+                           @oninput="OnResponsibleInput" />
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-weight"
+                       Label="Peso / volume"
+                       Required="true"
+                       Error="@ErrorOf(WeightField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="text"
+                           autocomplete="off"
+                           placeholder="600 g"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_weightRef"
+                           value="@Print.Weight"
+                           @oninput="OnWeightInput" />
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-brand"
+                       Label="Marca / fornecedor"
+                       Required="true"
+                       Error="@ErrorOf(BrandField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="text"
+                           autocomplete="off"
+                           placeholder="SWIFT"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_brandRef"
+                           value="@Print.Brand"
+                           @oninput="OnBrandInput" />
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-sif"
+                       Label="SIF"
+                       Hint="Preencha apenas quando o produto tiver registro no SIF.">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="text"
+                           autocomplete="off"
+                           placeholder="0303"
+                           aria-describedby="@field.DescribedBy"
+                           value="@Print.Sif"
+                           @oninput="OnSifInput" />
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="print-batch"
+                       Label="Lote"
+                       Required="true"
+                       Error="@ErrorOf(BatchField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="text"
+                           autocomplete="off"
+                           placeholder="F1L3TM1GN0N"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_batchRef"
+                           value="@Print.Batch"
+                           @oninput="OnBatchInput" />
+                </ChildContent>
+            </FormField>
+        </div>
+    </section>
+
+    @* O browser é quem imprime: sem esses dois ajustes a etiqueta sai com margem e cabeçalho. *@
+    <p class="print-form-note">
+        Nas opções de impressão, escolha <strong>Margens: Nenhuma</strong> e desmarque
+        <strong>Cabeçalhos e rodapés</strong>.
+    </p>
+
+    <div class="print-form-actions">
+        <button type="button"
+                class="print-form-action is-secondary btn d-flex align-items-center justify-content-center"
+                @onclick="OnCancel">
+            Voltar
+        </button>
+
+        <button type="submit"
+                class="print-form-action is-primary btn d-flex align-items-center justify-content-center">
+            Imprimir
+        </button>
+    </div>
+</form>
+
+@code {
+    /// <summary>Impressora configurada para a unidade e a medida padrão da sua etiqueta.</summary>
+    public sealed record PrintPoint(int Id, string Name, int WidthMm, int HeightMm)
+    {
+        /// <summary>Ponto pré-selecionado ao abrir a tela.</summary>
+        public bool IsDefault { get; init; }
+
+        /// <summary>Rótulo do select: nome + medida, como na referência visual.</summary>
+        public string Display => $"{Name} ({WidthMm}mm x {HeightMm}mm)";
+    }
+
+    /// <summary>Dimensão física da etiqueta, em milímetros.</summary>
+    public sealed record LabelSize(int WidthMm, int HeightMm)
+    {
+        /// <summary>Valor do <c>option</c>, já que o record não serve como valor de select.</summary>
+        public string Key => $"{WidthMm}x{HeightMm}";
+
+        public string Display => $"{WidthMm}mm x {HeightMm}mm";
+    }
+
+    private const string DateFormat = "dd/MM/yyyy";
+    private const string DateTimeFormat = "dd/MM/yyyy - HH'h'mm";
+    private const string InputDateFormat = "yyyy-MM-dd";
+    private const string InputDateTimeFormat = "yyyy-MM-ddTHH:mm";
+
+    private const int MinCopies = 1;
+    private const int MaxCopies = 20;
+
+    private const string PointField = "point";
+    private const string CopiesField = "copies";
+    private const string OriginalExpiresAtField = "originalExpiresAt";
+    private const string HandledAtField = "handledAt";
+    private const string ResponsibleField = "responsible";
+    private const string WeightField = "weight";
+    private const string BrandField = "brand";
+    private const string BatchField = "batch";
+
+    /// <summary>Medidas oferecidas na tela. A de 60 × 60 mm é a da especificação da etiqueta.</summary>
+    public static readonly LabelSize[] Sizes = [new(60, 60), new(50, 50), new(60, 40), new(40, 40)];
+
+    private readonly Dictionary<string, string> _errors = [];
+
+    private ElementReference _pointRef;
+    private ElementReference _copiesRef;
+    private ElementReference _originalExpiresAtRef;
+    private ElementReference _handledAtRef;
+    private ElementReference _responsibleRef;
+    private ElementReference _weightRef;
+    private ElementReference _brandRef;
+    private ElementReference _batchRef;
+
+    private IReadOnlyList<PrintPoint> _points = [];
+    private string _pointId = string.Empty;
+    private int _copies = MinCopies;
+
+    /// <summary>
+    /// Manipulação só é obrigatória para etiqueta já aberta. A etiqueta chega lacrada quando o campo vem
+    /// vazio, e nesse caso o colaborador pode imprimir sem informar o momento 2.
+    /// </summary>
+    private bool _requiresHandledAt;
+
+    private bool _initialized;
+
+    /// <summary>Dados reproduzidos na etiqueta. O formulário devolve uma cópia alterada a cada edição.</summary>
+    [Parameter, EditorRequired]
+    public required LabelCard.LabelPrint Print { get; set; }
+
+    /// <summary>Medida escolhida, que define o tamanho da folha e da pré-visualização.</summary>
+    [Parameter, EditorRequired]
+    public required LabelSize Size { get; set; }
+
+    /// <summary>Disparado a cada edição de um campo da etiqueta.</summary>
+    [Parameter]
+    public EventCallback<LabelCard.LabelPrint> OnPrintChanged { get; set; }
+
+    /// <summary>Disparado quando a medida muda, direta ou indiretamente pelo ponto de impressão.</summary>
+    [Parameter]
+    public EventCallback<LabelSize> OnSizeChanged { get; set; }
+
+    /// <summary>Disparado na submissão, apenas quando todos os campos obrigatórios estão preenchidos.</summary>
+    [Parameter]
+    public EventCallback<int> OnSubmit { get; set; }
+
+    /// <summary>Disparado pelo botão "Voltar".</summary>
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _points = await Http.GetFromJsonAsync<PrintPoint[]>("sample-data/print-points.json") ?? [];
+
+        PrintPoint? preferred = _points.FirstOrDefault(point => point.IsDefault) ?? _points.FirstOrDefault();
+
+        if (preferred is not null)
+        {
+            _pointId = preferred.Id.ToString(CultureInfo.InvariantCulture);
+            await ChangeSize(new LabelSize(preferred.WidthMm, preferred.HeightMm));
+        }
+    }
+
+    /// <summary>O estado inicial da etiqueta decide se a manipulação é obrigatória — ver <see cref="_requiresHandledAt"/>.</summary>
+    protected override void OnParametersSet()
+    {
+        if (_initialized)
+        {
+            return;
+        }
+
+        _initialized = true;
+        _requiresHandledAt = !string.IsNullOrWhiteSpace(Print.HandledAt);
+    }
+
+    private string? ErrorOf(string field) => _errors.GetValueOrDefault(field);
+
+    private Task ChangePrint(LabelCard.LabelPrint print) => OnPrintChanged.InvokeAsync(print);
+
+    private Task ChangeSize(LabelSize size)
+    {
+        Size = size;
+        return OnSizeChanged.InvokeAsync(size);
+    }
+
+    private static string Text(ChangeEventArgs args) => args.Value?.ToString() ?? string.Empty;
+
+    private async Task OnPointChanged(ChangeEventArgs args)
+    {
+        _pointId = Text(args);
+        _errors.Remove(PointField);
+
+        if (_points.FirstOrDefault(point => point.Id.ToString(CultureInfo.InvariantCulture) == _pointId) is PrintPoint point)
+        {
+            await ChangeSize(new LabelSize(point.WidthMm, point.HeightMm));
+        }
+    }
+
+    private Task OnSizeSelected(ChangeEventArgs args)
+    {
+        string key = Text(args);
+        LabelSize size = Sizes.FirstOrDefault(candidate => candidate.Key == key) ?? Sizes[0];
+
+        return ChangeSize(size);
+    }
+
+    private void OnCopiesChanged(ChangeEventArgs args)
+    {
+        _errors.Remove(CopiesField);
+
+        _copies = int.TryParse(Text(args), NumberStyles.Integer, CultureInfo.InvariantCulture, out int copies)
+            ? Math.Clamp(copies, MinCopies, MaxCopies)
+            : MinCopies;
+    }
+
+    private Task OnOriginalExpiresAtChanged(ChangeEventArgs args)
+    {
+        _errors.Remove(OriginalExpiresAtField);
+        return ChangePrint(Print with { OriginalExpiresAt = FromInputDate(Text(args)) });
+    }
+
+    private Task OnHandledAtChanged(ChangeEventArgs args)
+    {
+        _errors.Remove(HandledAtField);
+        return ChangePrint(Print with { HandledAt = FromInputDateTime(Text(args)) });
+    }
+
+    private Task OnResponsibleInput(ChangeEventArgs args)
+    {
+        _errors.Remove(ResponsibleField);
+        return ChangePrint(Print with { Responsible = Text(args) });
+    }
+
+    private Task OnWeightInput(ChangeEventArgs args)
+    {
+        _errors.Remove(WeightField);
+        return ChangePrint(Print with { Weight = Text(args) });
+    }
+
+    private Task OnBrandInput(ChangeEventArgs args)
+    {
+        _errors.Remove(BrandField);
+        return ChangePrint(Print with { Brand = Text(args) });
+    }
+
+    private Task OnSifInput(ChangeEventArgs args)
+    {
+        string sif = Text(args);
+        return ChangePrint(Print with { Sif = string.IsNullOrWhiteSpace(sif) ? null : sif });
+    }
+
+    private Task OnBatchInput(ChangeEventArgs args)
+    {
+        _errors.Remove(BatchField);
+        return ChangePrint(Print with { Batch = Text(args) });
+    }
+
+    /// <summary>Valida os obrigatórios e, só então, pede a impressão. O campo inválido recebe o foco.</summary>
+    private async Task SubmitAsync()
+    {
+        _errors.Clear();
+
+        Require(PointField, _pointId);
+        Require(OriginalExpiresAtField, Print.OriginalExpiresAt);
+        Require(ResponsibleField, Print.Responsible);
+        Require(WeightField, Print.Weight);
+        Require(BrandField, Print.Brand);
+        Require(BatchField, Print.Batch);
+
+        if (_requiresHandledAt)
+        {
+            Require(HandledAtField, Print.HandledAt);
+        }
+
+        if (_copies is < MinCopies or > MaxCopies)
+        {
+            _errors[CopiesField] = $"Informe de {MinCopies} a {MaxCopies} cópias.";
+        }
+
+        if (_errors.Count > 0)
+        {
+            await FocusFirstInvalidAsync();
+            return;
+        }
+
+        await OnSubmit.InvokeAsync(_copies);
+    }
+
+    /// <summary>Leva o foco ao primeiro campo em erro, na mesma ordem em que aparecem na tela.</summary>
+    private async Task FocusFirstInvalidAsync()
+    {
+        (string Field, ElementReference Element)[] order =
+        [
+            (PointField, _pointRef),
+            (CopiesField, _copiesRef),
+            (OriginalExpiresAtField, _originalExpiresAtRef),
+            (HandledAtField, _handledAtRef),
+            (ResponsibleField, _responsibleRef),
+            (WeightField, _weightRef),
+            (BrandField, _brandRef),
+            (BatchField, _batchRef)
+        ];
+
+        foreach ((string field, ElementReference element) in order)
+        {
+            if (_errors.ContainsKey(field))
+            {
+                await element.FocusAsync();
+                return;
+            }
+        }
+    }
+
+    private void Require(string field, string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            _errors[field] = "Campo obrigatório.";
+        }
+    }
+
+    private static string ToInputDate(string? value) =>
+        DateOnly.TryParseExact(value, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly date)
+            ? date.ToString(InputDateFormat, CultureInfo.InvariantCulture)
+            : string.Empty;
+
+    private static string FromInputDate(string? value) =>
+        DateOnly.TryParseExact(value, InputDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly date)
+            ? date.ToString(DateFormat, CultureInfo.InvariantCulture)
+            : string.Empty;
+
+    private static string ToInputDateTime(string? value) =>
+        DateTime.TryParseExact(value, DateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime moment)
+            ? moment.ToString(InputDateTimeFormat, CultureInfo.InvariantCulture)
+            : string.Empty;
+
+    /// <summary>Manipulação vazia devolve <c>null</c>: é assim que a etiqueta volta ao estado lacrado.</summary>
+    private static string? FromInputDateTime(string? value) =>
+        DateTime.TryParseExact(value, InputDateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime moment)
+            ? moment.ToString(DateTimeFormat, CultureInfo.InvariantCulture)
+            : null;
+}

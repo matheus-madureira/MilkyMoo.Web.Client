@@ -1,0 +1,112 @@
+.print-form {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+.print-form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.print-form-section-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #000000;
+}
+
+/* Mobile em coluna única; o desktop divide em duas no @media abaixo. */
+.print-form-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+}
+
+.print-form-note {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #6b6b6b;
+}
+
+.print-form-note strong {
+    font-weight: 700;
+    color: #1d1d1b;
+}
+
+/*
+ * No mobile as ações acompanham o rodapé da tela, acima da área segura do aparelho. A borda e a sombra
+ * existem porque o formulário rola por baixo da barra: sem elas o campo encoberto parece cortado.
+ */
+.print-form-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px;
+    margin-top: 4px;
+    padding: 14px 0 calc(14px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(29, 29, 27, 0.12);
+    background-color: #FFF5F7;
+    box-shadow: 0 -10px 16px -10px rgba(0, 0, 0, 0.18);
+}
+
+.print-form-action {
+    height: 50px;
+    padding: 12px 16px;
+    border-radius: 70px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.6rem;
+    color: #000000;
+    white-space: nowrap;
+}
+
+.print-form-action.is-primary {
+    background-color: #f5c1cf;
+}
+
+.print-form-action.is-primary:hover {
+    background-color: #ffffff;
+    color: #E993A7;
+    cursor: pointer;
+}
+
+.print-form-action.is-secondary {
+    background-color: transparent;
+    border: 1px solid rgba(29, 29, 27, 0.2);
+}
+
+.print-form-action.is-secondary:hover {
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+@media (min-width: 768px) {
+    .print-form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* O ponto de impressão é o rótulo mais longo: ocupa a linha inteira. */
+    .print-form-grid ::deep .form-field:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .print-form-actions {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 160px));
+        justify-content: flex-end;
+        padding-bottom: 0;
+        border-top: 0;
+        background-color: transparent;
+        box-shadow: none;
+    }
+}

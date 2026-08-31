@@ -1,6 +1,7 @@
 ﻿@page "/etiquetas"
 @using System.Globalization
 @inject HttpClient Http
+@inject NavigationManager Navigation
 
 <PageTitle>Etiquetas Milky Moo</PageTitle>
 
@@ -41,7 +42,10 @@
                 <div class="labels-grid">
                     @foreach (LabelCard.PrintedLabel label in _visibleLabels)
                     {
-                        <LabelCard @key="label.Id" Label="label" OnDetails="() => OpenDetails(label)" />
+                        <LabelCard @key="label.Id"
+                                   Label="label"
+                                   OnDetails="() => OpenDetails(label)"
+                                   OnPrint="() => OpenPrint(label)" />
                     }
                 </div>
             }
@@ -115,6 +119,10 @@
         _selectedLabel = label;
         _isDetailsOpen = true;
     }
+
+    /// <summary>A impressão acontece em tela própria, com a pré-visualização e os campos editáveis.</summary>
+    private void OpenPrint(LabelCard.PrintedLabel label) =>
+        Navigation.NavigateTo($"etiquetas/{label.Id}/imprimir");
 
     private void OnFiltersChanged(LabelFilters.LabelFilterState filters)
     {

@@ -1,0 +1,91 @@
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.form-field-label {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: #1d1d1b;
+}
+
+.form-field-required {
+    margin-left: 2px;
+    color: #E03131;
+}
+
+.form-field-control {
+    position: relative;
+    display: flex;
+}
+
+/* Controles do campo: mesma casca do .labels-page-size já usado na listagem. */
+.form-field-control ::deep input,
+.form-field-control ::deep select,
+.form-field-control ::deep textarea {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+    padding: 0 16px;
+    border: 1px solid rgba(29, 29, 27, 0.15);
+    border-radius: 0.375rem;
+    background-color: #ffffff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1b;
+}
+
+.form-field-control ::deep select {
+    cursor: pointer;
+}
+
+.form-field-control ::deep input:focus,
+.form-field-control ::deep input:focus-visible,
+.form-field-control ::deep select:focus,
+.form-field-control ::deep select:focus-visible {
+    outline: none;
+    border-color: #E993A7;
+}
+
+.form-field-control ::deep input[aria-invalid="true"],
+.form-field-control ::deep select[aria-invalid="true"] {
+    border-color: #E03131;
+}
+
+.form-field-control ::deep input::placeholder {
+    font-weight: 500;
+    color: #9a9a97;
+}
+
+.form-field-control.has-icon ::deep input,
+.form-field-control.has-icon ::deep select {
+    padding-left: 42px;
+}
+
+.form-field-icon {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    display: flex;
+    transform: translateY(-50%);
+    color: #9a9a97;
+    pointer-events: none;
+}
+
+.form-field-error {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #E03131;
+}
+
+.form-field-hint {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    color: #6b6b6b;
+}

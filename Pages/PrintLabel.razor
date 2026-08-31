@@ -1,0 +1,139 @@
+﻿@page "/etiquetas/{Id:int}/imprimir"
+@implements IAsyncDisposable
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+
+<PageTitle>Imprimir etiqueta — Milky Moo</PageTitle>
+
+<div class="print-page">
+    @if (_notFound)
+    {
+        <header class="print-page-heading">
+            <h1 class="print-page-title">Etiqueta não encontrada</h1>
+
+            <p class="print-page-description">
+                A etiqueta que você tentou imprimir não existe mais ou nunca foi emitida.
+            </p>
+        </header>
+
+        <a class="print-page-back" href="etiquetas">Voltar para etiquetas</a>
+    }
+    else if (_label is null || _print is null)
+    {
+        <p class="print-page-loading">Carregando etiqueta...</p>
+    }
+    else
+    {
+        <header class="print-page-heading">
+            <h1 class="print-page-title">Imprimir etiqueta</h1>
+
+            <p class="print-page-description">
+                Sua etiqueta está pronta para ser impressa, mas se preferir você pode inserir
+                informações adicionais.
+            </p>
+        </header>
+
+        @* .print-area é a única coisa que sobra na folha — ver o @media print em css/app.css. *@
+        <div class="print-area"
+             role="group"
+             aria-label="Pré-visualização da etiqueta"
+             style="--label-width: @(_size.WidthMm)mm; --label-height: @(_size.HeightMm)mm">
+            <PrintedLabelPreview Product="@_label.Product" Print="_print" />
+        </div>
+
+        <PrintLabelForm Print="_print"
+                        Size="_size"
+                        OnPrintChanged="OnPrintChanged"
+                        OnSizeChanged="OnSizeChanged"
+                        OnSubmit="PrintAsync"
+                        OnCancel="GoBack" />
+    }
+</div>
+
+@code {
+    private IJSObjectReference? _module;
+
+    private LabelCard.PrintedLabel? _label;
+    private LabelCard.LabelPrint? _print;
+    private PrintLabelForm.LabelSize _size = PrintLabelForm.Sizes[0];
+    private bool _notFound;
+    private bool _pageSizeIsStale = true;
+
+    /// <summary>Identificador da etiqueta a imprimir, vindo da rota.</summary>
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        LabelCard.PrintedLabel[] labels =
+            await Http.GetFromJsonAsync<LabelCard.PrintedLabel[]>("sample-data/labels.json") ?? [];
+
+        _label = labels.FirstOrDefault(label => label.Id == Id);
+        _print = _label?.Print;
+        _notFound = _label is null || _print is null;
+    }
+
+    /// <summary>
+    /// O módulo só é importado depois da primeira renderização, e a medida é reenviada sempre que muda:
+    /// <c>@page { size }</c> não aceita <c>var()</c>, então quem escreve a regra é o JS.
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_notFound)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/print.js");
+        }
+
+        if (_module is null || !_pageSizeIsStale)
+        {
+            return;
+        }
+
+        _pageSizeIsStale = false;
+        await _module.InvokeVoidAsync("setPageSize", _size.WidthMm, _size.HeightMm);
+    }
+
+    private void OnPrintChanged(LabelCard.LabelPrint print) => _print = print;
+
+    private void OnSizeChanged(PrintLabelForm.LabelSize size)
+    {
+        _size = size;
+        _pageSizeIsStale = true;
+    }
+
+    /// <summary>
+    /// A quantidade de cópias chega aqui, mas quem a aplica neste primeiro momento é o próprio diálogo do
+    /// browser — o valor fica reservado para o envio ZPL.
+    /// </summary>
+    private async Task PrintAsync(int copies)
+    {
+        _ = copies;
+
+        if (_module is null)
+        {
+            return;
+        }
+
+        await _module.InvokeVoidAsync("print");
+    }
+
+    private void GoBack() => Navigation.NavigateTo("etiquetas");
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // A página já foi descartada junto com o runtime; nada a liberar.
+        }
+    }
+}

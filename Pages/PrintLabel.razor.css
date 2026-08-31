@@ -1,0 +1,110 @@
+.print-page {
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* A referência visual centraliza o título desta tela, ao contrário das demais páginas. */
+.print-page-heading {
+    text-align: center;
+}
+
+.print-page-title {
+    margin: 0;
+    font-weight: 800;
+    font-size: 22px;
+    line-height: 1.3;
+    color: #000000;
+}
+
+.print-page-description {
+    margin: 12px 0 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #6b6b6b;
+}
+
+.print-page-loading {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d1d1b;
+}
+
+.print-page-back {
+    align-self: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #E993A7;
+}
+
+/*
+ * Na tela a etiqueta é um cartão centralizado, com a altura do próprio conteúdo — prender a caixa à
+ * proporção da medida faria o rodapé vazar do cartão. A medida física só vale na folha (ver css/app.css).
+ */
+.print-area {
+    width: min(100%, 320px);
+    margin: 0 auto;
+}
+
+/*
+ * Na folha a etiqueta sai do fluxo e assume a medida escolhida, encostada no canto. Precisa estar aqui, e não
+ * no css/app.css: o seletor com escopo vence o global, e vindo depois da regra de tela também vence o empate.
+ */
+@media print {
+    .print-area {
+        position: fixed;
+        inset: 0 auto auto 0;
+        width: var(--label-width, 60mm);
+        height: var(--label-height, 60mm);
+        max-width: none;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+@media (min-width: 768px) {
+    .print-page {
+        max-width: 640px;
+        gap: 32px;
+    }
+
+    .print-page-title {
+        font-size: 28px;
+    }
+
+    .print-page-description {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .print-page {
+        max-width: 960px;
+        display: grid;
+        grid-template-columns: 320px minmax(0, 1fr);
+        grid-template-areas:
+            "heading heading"
+            "label   form";
+        align-items: start;
+        column-gap: 48px;
+    }
+
+    .print-page-heading {
+        grid-area: heading;
+    }
+
+    /* A etiqueta acompanha a rolagem do formulário, que é mais alto que ela. */
+    .print-area {
+        grid-area: label;
+        position: sticky;
+        top: 0;
+    }
+
+    .print-page ::deep .print-form {
+        grid-area: form;
+    }
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Suflex - mock 60x60",
+    "widthMm": 60,
+    "heightMm": 60,
+    "isDefault": true
+  },
+  {
+    "id": 2,
+    "name": "Cozinha - Zebra ZD220",
+    "widthMm": 60,
+    "heightMm": 60,
+    "isDefault": false
+  },
+  {
+    "id": 3,
+    "name": "Recepção - Argox OS-214",
+    "widthMm": 50,
+    "heightMm": 50,
+    "isDefault": false
+  },
+  {
+    "id": 4,
+    "name": "Câmara fria - Elgin L42",
+    "widthMm": 60,
+    "heightMm": 40,
+    "isDefault": false
+  }
+]

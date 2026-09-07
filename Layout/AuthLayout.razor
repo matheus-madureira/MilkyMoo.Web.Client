@@ -1,0 +1,14 @@
+﻿@inherits LayoutComponentBase
+
+@* Login e cadastro não usam o Header: a navegação dele aponta só para páginas protegidas. *@
+<div class="auth-page">
+    <main class="auth-main">
+        <img src="/images/logo.webp"
+             alt="Logo da MilkyMoo"
+             class="auth-logo" />
+
+        <div class="auth-card">
+            @Body
+        </div>
+    </main>
+</div>

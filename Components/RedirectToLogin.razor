@@ -1,0 +1,18 @@
+@inject NavigationManager Navigation
+
+@code {
+    /// <summary>
+    /// Manda quem não tem sessão para a tela de entrada, guardando o destino original para voltar depois
+    /// do login.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        string target = Navigation.ToBaseRelativePath(Navigation.Uri);
+
+        string destination = string.IsNullOrWhiteSpace(target) || target.StartsWith("entrar", StringComparison.OrdinalIgnoreCase)
+            ? "entrar"
+            : $"entrar?returnUrl={Uri.EscapeDataString($"/{target}")}";
+
+        Navigation.NavigateTo(destination, replace: true);
+    }
+}

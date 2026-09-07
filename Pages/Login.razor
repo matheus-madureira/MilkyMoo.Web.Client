@@ -1,0 +1,212 @@
+﻿@page "/entrar"
+@layout AuthLayout
+@inject AuthService Auth
+@inject NavigationManager Navigation
+
+<PageTitle>Entrar — Milky Moo</PageTitle>
+
+<h1 class="auth-title">Entrar</h1>
+
+<p class="auth-subtitle">Acesse sua conta para gerenciar as etiquetas da sua unidade.</p>
+
+<form class="auth-form" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
+    @if (_notice is not null)
+    {
+        <p class="auth-notice" role="status">@_notice</p>
+    }
+
+    @if (_error is not null)
+    {
+        <p class="auth-error" role="alert">@_error</p>
+    }
+
+    <FormField FieldId="login-email"
+               Label="E-mail"
+               Required="true"
+               Error="@ErrorOf(EmailField)">
+        <Icon>
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 class="lucide lucide-mail-icon lucide-mail">
+                <rect width="20" height="16" x="2" y="4" rx="2" />
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+        </Icon>
+
+        <ChildContent Context="field">
+            <input id="@field.FieldId"
+                   type="email"
+                   inputmode="email"
+                   autocomplete="username"
+                   placeholder="voce@empresa.com"
+                   aria-required="true"
+                   aria-invalid="@(field.HasError ? "true" : "false")"
+                   aria-describedby="@field.DescribedBy"
+                   @ref="_emailRef"
+                   value="@_email"
+                   @oninput="OnEmailInput" />
+        </ChildContent>
+    </FormField>
+
+    <FormField FieldId="login-password"
+               Label="Senha"
+               Required="true"
+               Error="@ErrorOf(PasswordField)">
+        <Icon>
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="18"
+                 height="18"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 class="lucide lucide-lock-icon lucide-lock">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+        </Icon>
+
+        <ChildContent Context="field">
+            <input id="@field.FieldId"
+                   type="@(_showPassword ? "text" : "password")"
+                   placeholder="******"
+                   autocomplete="current-password"
+                   aria-required="true"
+                   aria-invalid="@(field.HasError ? "true" : "false")"
+                   aria-describedby="@field.DescribedBy"
+                   @ref="_passwordRef"
+                   value="@_password"
+                   @oninput="OnPasswordInput" />
+
+            <button type="button"
+                    class="auth-password-toggle btn"
+                    aria-label="@(_showPassword ? "Ocultar senha" : "Mostrar senha")"
+                    aria-pressed="@(_showPassword ? "true" : "false")"
+                    @onclick="TogglePassword">
+                @(_showPassword ? "Ocultar" : "Mostrar")
+            </button>
+        </ChildContent>
+    </FormField>
+
+    <button type="submit" class="auth-submit btn" disabled="@_busy">
+        @(_busy ? "Entrando..." : "Entrar")
+    </button>
+
+    <p class="auth-switch">
+        Ainda não tem conta?
+        <a href="@RegisterHref">Criar conta</a>
+    </p>
+</form>
+
+@code {
+    private const string EmailField = "email";
+    private const string PasswordField = "password";
+
+    private readonly Dictionary<string, string> _errors = [];
+
+    private ElementReference _emailRef;
+    private ElementReference _passwordRef;
+
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string? _error;
+    private string? _notice;
+    private bool _showPassword;
+    private bool _busy;
+
+    /// <summary>Destino pretendido antes do redirecionamento para o login. Sempre relativo.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    /// <summary>Aviso vindo de outra tela — por exemplo, conta criada mas sem login automático.</summary>
+    [Parameter, SupplyParameterFromQuery(Name = "aviso")]
+    public string? Notice { get; set; }
+
+    private string RegisterHref => ReturnUrl is null
+        ? "cadastrar"
+        : $"cadastrar?returnUrl={Uri.EscapeDataString(ReturnUrl)}";
+
+    protected override void OnParametersSet() =>
+        _notice = Notice is "conta-criada"
+            ? "Conta criada. Entre com seu e-mail e senha."
+            : null;
+
+    private string? ErrorOf(string field) => _errors.GetValueOrDefault(field);
+
+    private static string Text(ChangeEventArgs args) => args.Value?.ToString() ?? string.Empty;
+
+    private void OnEmailInput(ChangeEventArgs args)
+    {
+        _errors.Remove(EmailField);
+        _email = Text(args);
+    }
+
+    private void OnPasswordInput(ChangeEventArgs args)
+    {
+        _errors.Remove(PasswordField);
+        _password = Text(args);
+    }
+
+    private void TogglePassword() => _showPassword = !_showPassword;
+
+    /// <summary>Valida o que dá para validar aqui e só então gasta uma ida à API.</summary>
+    private async Task SubmitAsync()
+    {
+        if (_busy)
+        {
+            return;
+        }
+
+        _errors.Clear();
+        _error = null;
+        _notice = null;
+
+        if (!AuthValidation.IsEmail(_email))
+        {
+            _errors[EmailField] = "Informe um e-mail válido.";
+        }
+
+        if (string.IsNullOrEmpty(_password))
+        {
+            _errors[PasswordField] = "Informe sua senha.";
+        }
+
+        if (_errors.Count > 0)
+        {
+            await FocusFirstErrorAsync();
+            return;
+        }
+
+        _busy = true;
+
+        try
+        {
+            AuthResult result = await Auth.LoginAsync(_email, _password);
+
+            if (!result.Succeeded)
+            {
+                _error = result.Error;
+                return;
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+
+        // replace: true para o "voltar" do browser não cair na tela de login já autenticado.
+        Navigation.NavigateTo(AuthValidation.SafeReturnUrl(ReturnUrl) ?? "etiquetas", replace: true);
+    }
+
+    private ValueTask FocusFirstErrorAsync() =>
+        _errors.ContainsKey(EmailField) ? _emailRef.FocusAsync() : _passwordRef.FocusAsync();
+}

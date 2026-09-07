@@ -1,4 +1,4 @@
-@implements IDisposable
+﻿@implements IDisposable
 @inject NavigationManager Navigation
 
 <button type="button"
@@ -70,7 +70,7 @@
 
     <div class="mobile-menu-footer">
         <BranchLocation BranchName="@BranchName" />
-        <LoggedUser UserName="@UserName" />
+        <LoggedUser UserName="@UserName" Role="@Role" OnClick="OnUserClick" />
     </div>
 </aside>
 
@@ -90,6 +90,14 @@
     /// <summary>Nome exibido do usuário autenticado no rodapé do menu.</summary>
     [Parameter]
     public string UserName { get; set; } = "John Doe";
+
+    /// <summary>Linha secundária exibida abaixo do nome no rodapé do menu.</summary>
+    [Parameter]
+    public string Role { get; set; } = "Gestor";
+
+    /// <summary>Disparado ao acionar o usuário no rodapé do menu.</summary>
+    [Parameter]
+    public EventCallback OnUserClick { get; set; }
 
     protected override void OnInitialized() =>
         Navigation.LocationChanged += OnLocationChanged;

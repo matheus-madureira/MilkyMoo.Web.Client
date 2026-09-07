@@ -1,22 +1,44 @@
-<header class="app-header">
-    <div class="app-header-top d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center app-header-brand">
-            <MobileMenu BranchName="Unidade Jardins, São Paulo" />
+@inject AuthService Auth
+@inject NavigationManager Navigation
 
-            <div class="app-header-branch d-flex align-items-center">
-                <BranchLocation BranchName="Unidade Jardins, São Paulo" />
+<AuthorizeView>
+    <Authorized>
+        <header class="app-header">
+            <div class="app-header-top d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center app-header-brand">
+                    <MobileMenu BranchName="Unidade Jardins, São Paulo"
+                                UserName="@UserDisplay.Name(context.User)"
+                                Role="@UserDisplay.Subtitle(context.User)"
+                                OnUserClick="LogoutAsync" />
+
+                    <div class="app-header-branch d-flex align-items-center">
+                        <BranchLocation BranchName="Unidade Jardins, São Paulo" />
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center app-header-actions">
+                    <NotificationsButton />
+                    <SettingsButton />
+                </div>
             </div>
-        </div>
 
-        <div class="d-flex align-items-center app-header-actions">
-            <NotificationsButton />
-            <SettingsButton />
-        </div>
-    </div>
+            <NavigationLinks>
+                <TrailingContent>
+                    <LoggedUser UserName="@UserDisplay.Name(context.User)"
+                                Role="@UserDisplay.Subtitle(context.User)"
+                                OnClick="LogoutAsync" />
+                </TrailingContent>
+            </NavigationLinks>
+        </header>
+    </Authorized>
+</AuthorizeView>
 
-    <NavigationLinks>
-        <TrailingContent>
-            <LoggedUser />
-        </TrailingContent>
-    </NavigationLinks>
-</header>
+@code {
+    /// <summary>Encerra a sessão e devolve o usuário à tela de entrada.</summary>
+    private async Task LogoutAsync()
+    {
+        await Auth.LogoutAsync();
+
+        Navigation.NavigateTo("entrar", replace: true);
+    }
+}

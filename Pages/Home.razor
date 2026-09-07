@@ -1,8 +1,12 @@
 @page "/"
+@inject AuthSession Session
 @inject NavigationManager Navigation
 
 @code {
-    /// <summary>A raiz não tem conteúdo próprio: encaminha para a tela de etiquetas.</summary>
+    /// <summary>
+    /// A raiz não tem conteúdo próprio: encaminha para as etiquetas, ou para a entrada quando não há sessão.
+    /// Não leva <c>[Authorize]</c> para não sobrar um <c>returnUrl=/</c> inútil na query.
+    /// </summary>
     protected override void OnInitialized() =>
-        Navigation.NavigateTo("etiquetas", replace: true);
+        Navigation.NavigateTo(Session.IsAuthenticated ? "etiquetas" : "entrar", replace: true);
 }

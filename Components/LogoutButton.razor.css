@@ -1,0 +1,20 @@
+.logout-button {
+    background: #f5c1cf;
+    width: 36px;
+    height: 36px;
+    color: #000000;
+    border-radius: 50%;
+    padding: 0;
+    justify-content: center;
+}
+
+.logout-button ::deep svg {
+    width: 16px;
+    height: 16px;
+}
+
+.logout-button:hover {
+    background: #FFF5F7;
+    color: #E993A7;
+    cursor: pointer;
+}

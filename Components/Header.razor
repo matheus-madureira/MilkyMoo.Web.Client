@@ -8,8 +8,7 @@
                 <div class="d-flex align-items-center app-header-brand">
                     <MobileMenu BranchName="Unidade Jardins, São Paulo"
                                 UserName="@UserDisplay.Name(context.User)"
-                                Role="@UserDisplay.Subtitle(context.User)"
-                                OnUserClick="LogoutAsync" />
+                                Role="@UserDisplay.Subtitle(context.User)" />
 
                     <div class="app-header-branch d-flex align-items-center">
                         <BranchLocation BranchName="Unidade Jardins, São Paulo" />
@@ -19,14 +18,14 @@
                 <div class="d-flex align-items-center app-header-actions">
                     <NotificationsButton />
                     <SettingsButton />
+                    <LogoutButton OnClick="LogoutAsync" />
                 </div>
             </div>
 
             <NavigationLinks>
                 <TrailingContent>
                     <LoggedUser UserName="@UserDisplay.Name(context.User)"
-                                Role="@UserDisplay.Subtitle(context.User)"
-                                OnClick="LogoutAsync" />
+                                Role="@UserDisplay.Subtitle(context.User)" />
                 </TrailingContent>
             </NavigationLinks>
         </header>

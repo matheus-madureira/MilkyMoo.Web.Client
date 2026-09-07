@@ -70,7 +70,7 @@
 
     <div class="mobile-menu-footer">
         <BranchLocation BranchName="@BranchName" />
-        <LoggedUser UserName="@UserName" Role="@Role" OnClick="OnUserClick" />
+        <LoggedUser UserName="@UserName" Role="@Role" />
     </div>
 </aside>
 
@@ -94,10 +94,6 @@
     /// <summary>Linha secundária exibida abaixo do nome no rodapé do menu.</summary>
     [Parameter]
     public string Role { get; set; } = "Gestor";
-
-    /// <summary>Disparado ao acionar o usuário no rodapé do menu.</summary>
-    [Parameter]
-    public EventCallback OnUserClick { get; set; }
 
     protected override void OnInitialized() =>
         Navigation.LocationChanged += OnLocationChanged;

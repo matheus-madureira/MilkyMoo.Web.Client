@@ -43,13 +43,15 @@
     }
 
     .app-header-actions ::deep .notifications-button,
-    .app-header-actions ::deep .settings-button {
+    .app-header-actions ::deep .settings-button,
+    .app-header-actions ::deep .logout-button {
         width: 32px;
         height: 32px;
     }
 
     .app-header-actions ::deep .notifications-button svg,
-    .app-header-actions ::deep .settings-button svg {
+    .app-header-actions ::deep .settings-button svg,
+    .app-header-actions ::deep .logout-button svg {
         width: 16px;
         height: 16px;
     }

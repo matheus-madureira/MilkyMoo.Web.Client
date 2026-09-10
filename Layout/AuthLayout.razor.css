@@ -31,9 +31,8 @@
 }
 
 /*
- * Daqui para baixo é o conteúdo de Login e Register, que chegam pelo @Body e por isso carregam o escopo
- * delas, não o deste layout — só ::deep alcança. Fica aqui, e não duplicado nas duas páginas, porque as
- * telas são a mesma casca com campos diferentes.
+ * Daqui para baixo é o conteúdo do Login, que chega pelo @Body e por isso carrega o escopo da página, não
+ * o deste layout — só ::deep alcança.
  */
 .auth-card ::deep .auth-title {
     margin: 0 0 4px;
@@ -57,60 +56,16 @@
     gap: 16px;
 }
 
-.auth-card ::deep .auth-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 16px;
-}
-
-.auth-card ::deep .auth-error,
-.auth-card ::deep .auth-notice {
+.auth-card ::deep .auth-error {
     margin: 0;
     padding: 10px 12px;
     border-radius: 0.375rem;
     font-size: 0.8125rem;
     font-weight: 600;
     line-height: 1.125rem;
-}
-
-.auth-card ::deep .auth-error {
     border: 1px solid rgba(224, 49, 49, 0.35);
     background-color: rgba(224, 49, 49, 0.08);
     color: #E03131;
-}
-
-.auth-card ::deep .auth-notice {
-    border: 1px solid rgba(29, 29, 27, 0.15);
-    background-color: #FFF5F7;
-    color: #1d1d1b;
-}
-
-/*
- * Abre espaço para o botão "Mostrar", que fica sobre o controle. O seletor olha para o botão, e não para
- * o type do input: ele alterna entre password e text, e "Nome"/"Sobrenome" também são text.
- */
-.auth-card ::deep .form-field-control:has(.auth-password-toggle) input {
-    padding-right: 84px;
-}
-
-.auth-card ::deep .auth-password-toggle {
-    position: absolute;
-    top: 50%;
-    right: 8px;
-    padding: 4px 8px;
-    transform: translateY(-50%);
-    border: none;
-    border-radius: 0.25rem;
-    background: transparent;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #6b6b6b;
-}
-
-.auth-card ::deep .auth-password-toggle:hover {
-    background-color: #FFF5F7;
-    color: #E993A7;
-    cursor: pointer;
 }
 
 .auth-card ::deep .auth-submit {
@@ -136,24 +91,6 @@
     opacity: 0.6;
 }
 
-.auth-card ::deep .auth-switch {
-    margin: 4px 0 0;
-    text-align: center;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: #6b6b6b;
-}
-
-.auth-card ::deep .auth-switch a {
-    font-weight: 700;
-    color: #E993A7;
-    text-decoration: none;
-}
-
-.auth-card ::deep .auth-switch a:hover {
-    text-decoration: underline;
-}
-
 @media (min-width: 48rem) {
     .auth-main {
         justify-content: center;
@@ -163,9 +100,5 @@
 
     .auth-card {
         padding: 32px 28px;
-    }
-
-    .auth-card ::deep .auth-row {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }
 }

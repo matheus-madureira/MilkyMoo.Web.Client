@@ -1,0 +1,12 @@
+/* Mesma casca do .print-page-back, o outro link de retorno do app. */
+.page-back {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #E993A7;
+    text-decoration: none;
+}
+
+.page-back:hover {
+    text-decoration: underline;
+}

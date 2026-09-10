@@ -4,7 +4,7 @@ using System.Text.Json;
 namespace MilkyMoo.Services;
 
 /// <summary>
-/// Fachada de autenticação usada pelas telas: entrar, cadastrar, sair e restaurar a sessão no boot.
+/// Fachada de autenticação usada pelas telas: entrar, criar usuário, sair e restaurar a sessão no boot.
 /// Nunca lança — toda falha volta como <see cref="AuthResult"/> com mensagem em pt-BR.
 /// </summary>
 public sealed class AuthService(AuthSession session, ApiHttpClient api)
@@ -14,14 +14,14 @@ public sealed class AuthService(AuthSession session, ApiHttpClient api)
         session.SignInAsync(email.Trim(), password);
 
     /// <summary>
-    /// Cria a conta e já entra com ela.
+    /// Cria um usuário no realm.
     /// </summary>
     /// <remarks>
-    /// O usuário nasce habilitado e com e-mail confirmado, então o login logo em seguida funciona. Se ele
-    /// falhar mesmo assim, a conta <b>existe</b>: o retorno diz isso, para a tela mandar a pessoa ao login em
-    /// vez de sugerir um novo cadastro.
+    /// <b>Não</b> entra com ele: quem chama é um admin dentro do painel, e trocar a sessão pela do usuário
+    /// recém-criado o expulsaria da própria tela. O usuário nasce habilitado e com e-mail confirmado, então
+    /// ele consegue entrar sozinho logo em seguida.
     /// </remarks>
-    public async Task<RegisterResult> RegisterAsync(
+    public async Task<AuthResult> CreateUserAsync(
         string firstName,
         string lastName,
         string email,
@@ -42,21 +42,14 @@ public sealed class AuthService(AuthSession session, ApiHttpClient api)
                     lastName = lastName.Trim()
                 });
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return new RegisterResult(false, false, await ApiErrorReader.ReadAsync(response));
-            }
+            return response.IsSuccessStatusCode
+                ? AuthResult.Success()
+                : AuthResult.Failure(await ApiErrorReader.ReadAsync(response));
         }
         catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException or JsonException)
         {
-            return new RegisterResult(false, false, ApiErrorReader.NetworkError);
+            return AuthResult.Failure(ApiErrorReader.NetworkError);
         }
-
-        AuthResult signIn = await session.SignInAsync(username, password);
-
-        return signIn.Succeeded
-            ? new RegisterResult(true, true, null)
-            : new RegisterResult(false, true, signIn.Error);
     }
 
     /// <summary>
@@ -92,10 +85,4 @@ public sealed class AuthService(AuthSession session, ApiHttpClient api)
 
     /// <summary>Recupera a sessão salva no armazenamento local. Chamado uma vez, no start do app.</summary>
     public Task RestoreSessionAsync() => session.RestoreAsync();
-
-    /// <summary>
-    /// Resultado do cadastro. <paramref name="AccountCreated"/> distingue "não deu para criar" de
-    /// "criou, mas não conseguiu entrar".
-    /// </summary>
-    public sealed record RegisterResult(bool Succeeded, bool AccountCreated, string? Error);
 }

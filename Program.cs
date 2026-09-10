@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,7 +40,11 @@ builder.Services.AddScoped(sp => new ApiHttpClient(
 
 builder.Services.AddScoped<AuthService>();
 
-builder.Services.AddAuthorizationCore();
+// A política de admin lê o papel pelo indexador, como o resto da configuração: Get<T>() depende de
+// reflexão e o publish do WASM roda com trimming. Vazio hoje = todo autenticado passa (AdminPolicy).
+builder.Services.AddAuthorizationCore(options =>
+    options.AddPolicy(AdminPolicy.Name, AdminPolicy.Build(builder.Configuration["Auth:AdminRoles"])));
+
 builder.Services.AddScoped<AuthenticationStateProvider, MilkyMooAuthenticationStateProvider>();
 
 WebAssemblyHost host = builder.Build();

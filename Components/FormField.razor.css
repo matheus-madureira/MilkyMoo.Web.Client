@@ -76,6 +76,35 @@
     pointer-events: none;
 }
 
+/*
+ * Botão sobreposto ao controle (mostrar/ocultar senha). O seletor olha para o botão, e não para o type do
+ * input: ele alterna entre password e text, e há campos de texto comuns na mesma casca. Vive aqui, e não
+ * no layout, porque o botão chega como ChildContent do FormField em qualquer tela que precise dele.
+ */
+.form-field-control:has(.form-field-toggle) ::deep input {
+    padding-right: 84px;
+}
+
+.form-field-control ::deep .form-field-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    padding: 4px 8px;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 0.25rem;
+    background: transparent;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #6b6b6b;
+}
+
+.form-field-control ::deep .form-field-toggle:hover {
+    background-color: #FFF5F7;
+    color: #E993A7;
+    cursor: pointer;
+}
+
 .form-field-error {
     margin: 0;
     font-size: 12px;

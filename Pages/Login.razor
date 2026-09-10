@@ -10,11 +10,6 @@
 <p class="auth-subtitle">Acesse sua conta para gerenciar as etiquetas da sua unidade.</p>
 
 <form class="auth-form" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
-    @if (_notice is not null)
-    {
-        <p class="auth-notice" role="status">@_notice</p>
-    }
-
     @if (_error is not null)
     {
         <p class="auth-error" role="alert">@_error</p>
@@ -88,7 +83,7 @@
                    @oninput="OnPasswordInput" />
 
             <button type="button"
-                    class="auth-password-toggle btn"
+                    class="form-field-toggle btn"
                     aria-label="@(_showPassword ? "Ocultar senha" : "Mostrar senha")"
                     aria-pressed="@(_showPassword ? "true" : "false")"
                     @onclick="TogglePassword">
@@ -100,11 +95,6 @@
     <button type="submit" class="auth-submit btn" disabled="@_busy">
         @(_busy ? "Entrando..." : "Entrar")
     </button>
-
-    <p class="auth-switch">
-        Ainda não tem conta?
-        <a href="@RegisterHref">Criar conta</a>
-    </p>
 </form>
 
 @code {
@@ -119,26 +109,12 @@
     private string _email = string.Empty;
     private string _password = string.Empty;
     private string? _error;
-    private string? _notice;
     private bool _showPassword;
     private bool _busy;
 
     /// <summary>Destino pretendido antes do redirecionamento para o login. Sempre relativo.</summary>
     [Parameter, SupplyParameterFromQuery(Name = "returnUrl")]
     public string? ReturnUrl { get; set; }
-
-    /// <summary>Aviso vindo de outra tela — por exemplo, conta criada mas sem login automático.</summary>
-    [Parameter, SupplyParameterFromQuery(Name = "aviso")]
-    public string? Notice { get; set; }
-
-    private string RegisterHref => ReturnUrl is null
-        ? "cadastrar"
-        : $"cadastrar?returnUrl={Uri.EscapeDataString(ReturnUrl)}";
-
-    protected override void OnParametersSet() =>
-        _notice = Notice is "conta-criada"
-            ? "Conta criada. Entre com seu e-mail e senha."
-            : null;
 
     private string? ErrorOf(string field) => _errors.GetValueOrDefault(field);
 
@@ -168,7 +144,6 @@
 
         _errors.Clear();
         _error = null;
-        _notice = null;
 
         if (!AuthValidation.IsEmail(_email))
         {

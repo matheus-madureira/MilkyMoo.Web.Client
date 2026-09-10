@@ -1,0 +1,306 @@
+﻿@page "/configuracoes/usuarios/novo"
+@attribute [Authorize(Policy = AdminPolicy.Name)]
+@inject AuthService Auth
+
+<PageTitle>Novo usuário — Milky Moo</PageTitle>
+
+<h1 class="page-title">
+    NOVO USUÁRIO
+</h1>
+
+<p class="page-description">
+    Crie o acesso de um colaborador da sua unidade.
+</p>
+
+<div class="user-form-card">
+    <form class="user-form" @onsubmit="SubmitAsync" @onsubmit:preventDefault>
+        @if (_created is not null)
+        {
+            <p class="user-form-feedback is-success" role="status">Usuário @_created criado.</p>
+        }
+
+        @if (_error is not null)
+        {
+            <p class="user-form-feedback is-error" role="alert">@_error</p>
+        }
+
+        <div class="user-form-row">
+            <FormField FieldId="create-user-first-name"
+                       Label="Nome"
+                       Required="true"
+                       Error="@ErrorOf(FirstNameField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="text"
+                           autocomplete="off"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_firstNameRef"
+                           value="@_firstName"
+                           @oninput="@(args => Set(FirstNameField, ref _firstName, args))" />
+                </ChildContent>
+            </FormField>
+
+            <FormField FieldId="create-user-last-name"
+                       Label="Sobrenome"
+                       Required="true"
+                       Error="@ErrorOf(LastNameField)">
+                <ChildContent Context="field">
+                    <input id="@field.FieldId"
+                           type="text"
+                           autocomplete="off"
+                           aria-required="true"
+                           aria-invalid="@(field.HasError ? "true" : "false")"
+                           aria-describedby="@field.DescribedBy"
+                           @ref="_lastNameRef"
+                           value="@_lastName"
+                           @oninput="@(args => Set(LastNameField, ref _lastName, args))" />
+                </ChildContent>
+            </FormField>
+        </div>
+
+        @* Um campo só: a API exige que o nome de usuário seja o próprio e-mail. *@
+        <FormField FieldId="create-user-email"
+                   Label="E-mail"
+                   Required="true"
+                   Error="@ErrorOf(EmailField)"
+                   Hint="Será também o usuário de acesso dele.">
+            <Icon>
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="18"
+                     height="18"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     class="lucide lucide-mail-icon lucide-mail">
+                    <rect width="20" height="16" x="2" y="4" rx="2" />
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                </svg>
+            </Icon>
+
+            <ChildContent Context="field">
+                <input id="@field.FieldId"
+                       type="email"
+                       inputmode="email"
+                       autocomplete="off"
+                       placeholder="colaborador@empresa.com"
+                       aria-required="true"
+                       aria-invalid="@(field.HasError ? "true" : "false")"
+                       aria-describedby="@field.DescribedBy"
+                       @ref="_emailRef"
+                       value="@_email"
+                       @oninput="@(args => Set(EmailField, ref _email, args))" />
+            </ChildContent>
+        </FormField>
+
+        <FormField FieldId="create-user-password"
+                   Label="Senha"
+                   Required="true"
+                   Error="@ErrorOf(PasswordField)"
+                   Hint="@($"Mínimo de {AuthValidation.MinimumPasswordLength} caracteres.")"
+                   Icon="@LockIcon()">
+            <ChildContent Context="field">
+                <input id="@field.FieldId"
+                       type="@(_showPassword ? "text" : "password")"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       aria-invalid="@(field.HasError ? "true" : "false")"
+                       aria-describedby="@field.DescribedBy"
+                       @ref="_passwordRef"
+                       value="@_password"
+                       @oninput="@(args => Set(PasswordField, ref _password, args))" />
+
+                <button type="button"
+                        class="form-field-toggle btn"
+                        aria-label="@(_showPassword ? "Ocultar senha" : "Mostrar senha")"
+                        aria-pressed="@(_showPassword ? "true" : "false")"
+                        @onclick="TogglePassword">
+                    @(_showPassword ? "Ocultar" : "Mostrar")
+                </button>
+            </ChildContent>
+        </FormField>
+
+        <FormField FieldId="create-user-confirm"
+                   Label="Confirmar senha"
+                   Required="true"
+                   Error="@ErrorOf(ConfirmField)"
+                   Icon="@LockIcon()">
+            <ChildContent Context="field">
+                <input id="@field.FieldId"
+                       type="@(_showPassword ? "text" : "password")"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       aria-invalid="@(field.HasError ? "true" : "false")"
+                       aria-describedby="@field.DescribedBy"
+                       @ref="_confirmRef"
+                       value="@_confirm"
+                       @oninput="@(args => Set(ConfirmField, ref _confirm, args))" />
+            </ChildContent>
+        </FormField>
+
+        <div class="user-form-actions">
+            <a class="user-form-cancel" href="etiquetas">Cancelar</a>
+
+            <button type="submit" class="user-form-submit btn" disabled="@_busy">
+                @(_busy ? "Criando usuário..." : "Criar usuário")
+            </button>
+        </div>
+    </form>
+</div>
+
+@* Os dois campos de senha usam o mesmo cadeado; o fragmento evita repetir o SVG inteiro duas vezes. *@
+@code {
+    private RenderFragment LockIcon() =>
+    @<svg xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-lock-icon lucide-lock">
+        <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>;
+
+    private const string FirstNameField = "firstName";
+    private const string LastNameField = "lastName";
+    private const string EmailField = "email";
+    private const string PasswordField = "password";
+    private const string ConfirmField = "confirm";
+
+    private readonly Dictionary<string, string> _errors = [];
+
+    private ElementReference _firstNameRef;
+    private ElementReference _lastNameRef;
+    private ElementReference _emailRef;
+    private ElementReference _passwordRef;
+    private ElementReference _confirmRef;
+
+    private string _firstName = string.Empty;
+    private string _lastName = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _confirm = string.Empty;
+    private string? _error;
+
+    /// <summary>E-mail do último usuário criado. Alimenta a confirmação exibida acima do formulário.</summary>
+    private string? _created;
+
+    private bool _showPassword;
+    private bool _busy;
+
+    private string? ErrorOf(string field) => _errors.GetValueOrDefault(field);
+
+    private void Set(string field, ref string target, ChangeEventArgs args)
+    {
+        _errors.Remove(field);
+        target = args.Value?.ToString() ?? string.Empty;
+    }
+
+    private void TogglePassword() => _showPassword = !_showPassword;
+
+    /// <summary>Valida tudo que é possível no cliente — o realm não impõe política de senha.</summary>
+    private async Task SubmitAsync()
+    {
+        if (_busy)
+        {
+            return;
+        }
+
+        _errors.Clear();
+        _error = null;
+        _created = null;
+
+        if (string.IsNullOrWhiteSpace(_firstName))
+        {
+            _errors[FirstNameField] = "Informe o nome.";
+        }
+
+        if (string.IsNullOrWhiteSpace(_lastName))
+        {
+            _errors[LastNameField] = "Informe o sobrenome.";
+        }
+
+        if (!AuthValidation.IsEmail(_email))
+        {
+            _errors[EmailField] = "Informe um e-mail válido.";
+        }
+
+        if (_password.Length < AuthValidation.MinimumPasswordLength)
+        {
+            _errors[PasswordField] =
+                $"A senha precisa ter ao menos {AuthValidation.MinimumPasswordLength} caracteres.";
+        }
+
+        if (_confirm != _password)
+        {
+            _errors[ConfirmField] = "As senhas não conferem.";
+        }
+
+        if (_errors.Count > 0)
+        {
+            await FocusFirstErrorAsync();
+            return;
+        }
+
+        _busy = true;
+
+        AuthResult result;
+
+        try
+        {
+            result = await Auth.CreateUserAsync(_firstName, _lastName, _email, _password);
+        }
+        finally
+        {
+            _busy = false;
+        }
+
+        if (!result.Succeeded)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        // Quem administra costuma cadastrar vários seguidos: o formulário se limpa em vez de navegar.
+        _created = _email.Trim();
+
+        _firstName = string.Empty;
+        _lastName = string.Empty;
+        _email = string.Empty;
+        _password = string.Empty;
+        _confirm = string.Empty;
+        _showPassword = false;
+
+        await _firstNameRef.FocusAsync();
+    }
+
+    private ValueTask FocusFirstErrorAsync()
+    {
+        if (_errors.ContainsKey(FirstNameField))
+        {
+            return _firstNameRef.FocusAsync();
+        }
+
+        if (_errors.ContainsKey(LastNameField))
+        {
+            return _lastNameRef.FocusAsync();
+        }
+
+        if (_errors.ContainsKey(EmailField))
+        {
+            return _emailRef.FocusAsync();
+        }
+
+        return _errors.ContainsKey(PasswordField)
+            ? _passwordRef.FocusAsync()
+            : _confirmRef.FocusAsync();
+    }
+}

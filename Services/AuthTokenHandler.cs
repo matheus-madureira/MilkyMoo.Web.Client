@@ -8,8 +8,8 @@ namespace MilkyMoo.Services;
 /// expira — antes de enviar, e mais uma vez se a API responder 401.
 /// </summary>
 /// <remarks>
-/// As rotas de login, renovação e cadastro são públicas e não recebem <c>Authorization</c>: mandar um token
-/// morto para elas só provocaria um 401 desnecessário.
+/// As rotas de login e renovação são públicas e não recebem <c>Authorization</c>: mandar um token morto
+/// para elas só provocaria um 401 desnecessário.
 /// </remarks>
 public sealed class AuthTokenHandler(AuthSession session, ApiOptions options) : DelegatingHandler
 {
@@ -51,14 +51,17 @@ public sealed class AuthTokenHandler(AuthSession session, ApiOptions options) : 
         return await base.SendAsync(retry, cancellationToken);
     }
 
-    /// <summary>Cadastro (<c>POST /api/v1/users</c>) é anônimo; leitura e edição de usuários não são.</summary>
-    private static bool IsPublic(HttpRequestMessage request)
-    {
-        string path = request.RequestUri?.AbsolutePath ?? string.Empty;
-
-        return PublicPaths.Contains(path, StringComparer.OrdinalIgnoreCase)
-            || (request.Method == HttpMethod.Post && path.Equals("/api/v1/users", StringComparison.OrdinalIgnoreCase));
-    }
+    /// <summary>
+    /// Só login e renovação dispensam o token.
+    /// </summary>
+    /// <remarks>
+    /// <c>POST /api/v1/users</c> continua aceitando chamada anônima na API, mas no app ele virou ação de
+    /// painel: quem cria usuário é um admin autenticado, e a chamada vai assinada. Confirmado no ar que o
+    /// <c>Bearer</c> não atrapalha — a criação responde <b>201</b> com e sem ele. Assinar é o que permite a
+    /// API exigir papel administrativo nessa rota sem quebrar o cliente.
+    /// </remarks>
+    private static bool IsPublic(HttpRequestMessage request) =>
+        PublicPaths.Contains(request.RequestUri?.AbsolutePath ?? string.Empty, StringComparer.OrdinalIgnoreCase);
 
     private void Prepare(HttpRequestMessage request, string? accessToken)
     {

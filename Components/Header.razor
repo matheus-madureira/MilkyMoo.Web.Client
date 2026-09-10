@@ -17,7 +17,12 @@
 
                 <div class="d-flex align-items-center app-header-actions">
                     <NotificationsButton />
-                    <SettingsButton />
+
+                    @* Context nomeado: o AuthorizeView de fora já ocupa o "context" padrão. *@
+                    <AuthorizeView Policy="@AdminPolicy.Name" Context="admin">
+                        <SettingsButton OnClick="GoToSettings" />
+                    </AuthorizeView>
+
                     <LogoutButton OnClick="LogoutAsync" />
                 </div>
             </div>
@@ -33,6 +38,9 @@
 </AuthorizeView>
 
 @code {
+    /// <summary>Abre o cadastro de usuários, hoje a única tela sob configurações.</summary>
+    private void GoToSettings() => Navigation.NavigateTo("configuracoes/usuarios/novo");
+
     /// <summary>Encerra a sessão e devolve o usuário à tela de entrada.</summary>
     private async Task LogoutAsync()
     {

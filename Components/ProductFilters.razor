@@ -1,0 +1,197 @@
+<aside class="product-filters">
+    <div class="product-filters-header d-flex align-items-center justify-content-between">
+        <button type="button"
+                class="product-filters-heading btn d-flex align-items-center"
+                aria-expanded="@(_isOpen ? "true" : "false")"
+                aria-controls="product-filters-groups"
+                @onclick="ToggleGroups">
+            <span class="product-filters-title">Filtros</span>
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="20"
+                 height="20"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="3"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 class="product-filters-chevron @(_isOpen ? "is-open" : string.Empty)"
+                 aria-hidden="true">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+        </button>
+
+        <button type="button" class="product-filters-clear btn" @onclick="ClearAll">
+            Limpar tudo
+        </button>
+    </div>
+
+    <div id="product-filters-groups" class="product-filters-groups @(_isOpen ? "is-open" : string.Empty)">
+        <FilterGroup Title="Categoria">
+            <FilterOption Text="Todas"
+                          Count="Products.Count"
+                          IsChecked="State.Categories.Count == 0"
+                          OnToggle="() => Notify(State with { Categories = new HashSet<string>() })" />
+
+            @foreach (string category in Categories)
+            {
+                <FilterOption @key="category"
+                              Text="@category"
+                              Count="Products.Count(product => product.Category.Name == category)"
+                              IsChecked="State.Categories.Contains(category)"
+                              OnToggle="() => Toggle(State.Categories, category, Categories.Count, values => State with { Categories = values })" />
+            }
+        </FilterGroup>
+
+        <FilterGroup Title="Estado atual" Expanded="false">
+            <FilterOption Text="Todos"
+                          Count="Products.Count"
+                          IsChecked="State.States.Count == 0"
+                          OnToggle="() => Notify(State with { States = new HashSet<string>() })" />
+
+            @foreach (string state in States)
+            {
+                <FilterOption @key="state"
+                              Text="@Text(state, ProductLabels.State)"
+                              Count="Products.Count(product => Key(product.ProductState) == state)"
+                              IsChecked="State.States.Contains(state)"
+                              OnToggle="() => Toggle(State.States, state, States.Count, values => State with { States = values })" />
+            }
+        </FilterGroup>
+
+        <FilterGroup Title="Acondicionamento" Expanded="false">
+            <FilterOption Text="Todos"
+                          Count="Products.Count"
+                          IsChecked="State.Conditionings.Count == 0"
+                          OnToggle="() => Notify(State with { Conditionings = new HashSet<string>() })" />
+
+            @foreach (string conditioning in Conditionings)
+            {
+                <FilterOption @key="conditioning"
+                              Text="@Text(conditioning, ProductLabels.Conditioning)"
+                              Count="Products.Count(product => Key(product.Conditioning) == conditioning)"
+                              IsChecked="State.Conditionings.Contains(conditioning)"
+                              OnToggle="() => Toggle(State.Conditionings, conditioning, Conditionings.Count, values => State with { Conditionings = values })" />
+            }
+        </FilterGroup>
+
+        <FilterGroup Title="Validade" Expanded="false">
+            <FilterOption Text="Todas"
+                          Count="Products.Count"
+                          IsChecked="State.ShelfLifeTypes.Count == 0"
+                          OnToggle="() => Notify(State with { ShelfLifeTypes = new HashSet<string>() })" />
+
+            @foreach (string shelfLife in ShelfLifeTypes)
+            {
+                <FilterOption @key="shelfLife"
+                              Text="@Text(shelfLife, ProductLabels.ShelfLifeType)"
+                              Count="Products.Count(product => Key(product.ShelfLifeType) == shelfLife)"
+                              IsChecked="State.ShelfLifeTypes.Contains(shelfLife)"
+                              OnToggle="() => Toggle(State.ShelfLifeTypes, shelfLife, ShelfLifeTypes.Count, values => State with { ShelfLifeTypes = values })" />
+            }
+        </FilterGroup>
+    </div>
+</aside>
+
+@code {
+    private bool _isOpen;
+
+    /// <summary>
+    /// Valor que representa o campo não preenchido.
+    /// </summary>
+    /// <remarks>
+    /// Não é enfeite: é o balde dos produtos <c>Pending</c>, que vêm sem acondicionamento nem local — e é
+    /// justamente o filtro que a operação usa para achar o cadastro a completar.
+    /// </remarks>
+    public const string NotInformed = "";
+
+    /// <summary>
+    /// Seleção atual dos filtros. Coleções vazias significam "todos".
+    /// </summary>
+    /// <remarks>
+    /// As coleções guardam o <b>valor cru da API</b> (<c>"Refrigerated"</c>), nunca o texto traduzido:
+    /// comparar por texto de tela amarraria o filtro à tradução e o quebraria na primeira correção de palavra.
+    /// </remarks>
+    public sealed record ProductFilterState(
+        IReadOnlySet<string> Categories,
+        IReadOnlySet<string> States,
+        IReadOnlySet<string> Conditionings,
+        IReadOnlySet<string> ShelfLifeTypes,
+        string Search)
+    {
+        /// <summary>Estado inicial, sem nenhuma restrição aplicada.</summary>
+        public static ProductFilterState Empty { get; } = new(
+            new HashSet<string>(),
+            new HashSet<string>(),
+            new HashSet<string>(),
+            new HashSet<string>(),
+            string.Empty);
+    }
+
+    /// <summary>Produtos usados para montar as opções e os contadores.</summary>
+    [Parameter, EditorRequired]
+    public required IReadOnlyList<ProductsService.Product> Products { get; set; }
+
+    /// <summary>Seleção atual dos filtros.</summary>
+    [Parameter, EditorRequired]
+    public required ProductFilterState State { get; set; }
+
+    /// <summary>Disparado sempre que a seleção dos filtros muda.</summary>
+    [Parameter]
+    public EventCallback<ProductFilterState> OnChanged { get; set; }
+
+    /// <summary>
+    /// Categorias distintas, em ordem alfabética.
+    /// </summary>
+    /// <remarks>
+    /// Agrupadas pelo <b>nome</b>, e não pelo id: a API devolve <c>category.id</c> zerado
+    /// (<c>00000000-0000-0000-0000-000000000000</c>) em todos os produtos, e usar o id juntaria todas as
+    /// categorias numa só. Quando a API devolver id de verdade, trocar aqui e na página.
+    /// </remarks>
+    private IReadOnlyList<string> Categories =>
+        Products.Select(product => product.Category.Name).Distinct().Order().ToArray();
+
+    private IReadOnlyList<string> States => Distinct(product => product.ProductState);
+
+    private IReadOnlyList<string> Conditionings => Distinct(product => product.Conditioning);
+
+    private IReadOnlyList<string> ShelfLifeTypes => Distinct(product => product.ShelfLifeType);
+
+    private IReadOnlyList<string> Distinct(Func<ProductsService.Product, string?> selector) =>
+        Products.Select(product => Key(selector(product))).Distinct().Order().ToArray();
+
+    /// <summary>Nulo e vazio são o mesmo balde: "não informado".</summary>
+    public static string Key(string? value) => value ?? NotInformed;
+
+    private static string Text(string value, Func<string?, string> translate) =>
+        value == NotInformed ? "Não informado" : translate(value);
+
+    private void ToggleGroups() => _isOpen = !_isOpen;
+
+    private Task ClearAll() => Notify(ProductFilterState.Empty);
+
+    /// <summary>Marcar todas as opções equivale a "todos", então a seleção volta a ficar vazia.</summary>
+    private Task Toggle(
+        IReadOnlySet<string> current,
+        string value,
+        int total,
+        Func<IReadOnlySet<string>, ProductFilterState> apply)
+    {
+        HashSet<string> values = new(current);
+
+        if (!values.Add(value))
+        {
+            values.Remove(value);
+        }
+
+        if (values.Count == total)
+        {
+            values.Clear();
+        }
+
+        return Notify(apply(values));
+    }
+
+    private Task Notify(ProductFilterState state) => OnChanged.InvokeAsync(state);
+}

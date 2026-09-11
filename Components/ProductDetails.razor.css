@@ -1,0 +1,73 @@
+.product-details-breadcrumb {
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b6b6b;
+}
+
+.product-details-separator {
+    color: #c4c4c4;
+}
+
+.product-details-crumb.is-current {
+    color: #E2703A;
+    text-transform: lowercase;
+}
+
+.product-details-list {
+    margin: 0;
+    padding-top: 22px;
+}
+
+/* Rótulo à esquerda e valor à direita; o valor quebra em várias linhas quando precisa. */
+.product-details-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    align-items: baseline;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid #f0f0f2;
+}
+
+.product-details-row:last-child {
+    border-bottom: none;
+}
+
+.product-details-term {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b6b6b;
+}
+
+.product-details-value {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d1d1b;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.product-details-section {
+    padding-top: 26px;
+}
+
+.product-details-section-title {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #1d1d1b;
+}
+
+.product-details-notes {
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 10px;
+    background-color: #f4f4f5;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #1d1d1b;
+}

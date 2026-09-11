@@ -1,0 +1,57 @@
+<nav class="product-details-breadcrumb d-flex align-items-center flex-wrap" aria-label="Trilha do produto">
+    <span class="product-details-crumb">@Product.Category.Name</span>
+    <span class="product-details-separator" aria-hidden="true">›</span>
+    <span class="product-details-crumb is-current" aria-current="page">@Product.Name</span>
+</nav>
+
+<dl class="product-details-list">
+    @foreach ((string term, string value) in Rows)
+    {
+        <div @key="term" class="product-details-row">
+            <dt class="product-details-term">@term</dt>
+            <dd class="product-details-value">@value</dd>
+        </div>
+    }
+</dl>
+
+@if (!string.IsNullOrWhiteSpace(Product.Notes))
+{
+    <section class="product-details-section">
+        <h3 class="product-details-section-title">Observações</h3>
+        <p class="product-details-notes">@Product.Notes</p>
+    </section>
+}
+
+@code {
+    private const string DateFormat = "dd/MM/yyyy HH:mm";
+
+    /// <summary>Produto exibido no painel de detalhes.</summary>
+    [Parameter, EditorRequired]
+    public required ProductsService.Product Product { get; set; }
+
+    private IEnumerable<(string Term, string Value)> Rows
+    {
+        get
+        {
+            yield return ("Código", Product.Code);
+            yield return ("Categoria", Product.Category.Name);
+            yield return ("Marca ou fornecedor", Fallback(Product.BrandOrSupplier, "Não informado"));
+            yield return ("Estado atual", ProductLabels.State(Product.ProductState));
+            yield return ("Acondicionamento", ProductLabels.Conditioning(Product.Conditioning));
+            yield return ("Local de armazenamento", ProductLabels.Storage(Product.StorageLocation));
+            yield return ("Início da contagem", ProductLabels.CountingStart(Product.CountingStart));
+            yield return ("Validade", Product.ShelfLifeText);
+            yield return ("Origem", ProductLabels.Origin(Product.Origin));
+            yield return ("Cadastrado por", Fallback(Product.User?.Name, ProductLabels.Unknown));
+            yield return ("Cadastrado em", Moment(Product.CreatedAt));
+            yield return ("Atualizado em", Moment(Product.UpdatedAt));
+        }
+    }
+
+    private static string Fallback(string? value, string fallback) =>
+        string.IsNullOrWhiteSpace(value) ? fallback : value;
+
+    /// <summary>A API devolve em UTC (sufixo <c>Z</c>); sem converter, a data aparece horas adiante.</summary>
+    private static string Moment(DateTimeOffset? moment) =>
+        moment?.ToLocalTime().ToString(DateFormat) ?? ProductLabels.Unknown;
+}

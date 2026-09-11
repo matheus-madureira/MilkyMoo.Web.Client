@@ -15,9 +15,16 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 // Configuração lida pelo indexador, e não por Get<T>(): o binder depende de reflexão e o publish do WASM
 // roda com trimming, onde esse caminho é o primeiro a quebrar em silêncio.
+string authBaseUrl = builder.Configuration["Api:BaseUrl"]
+    ?? throw new InvalidOperationException("Api:BaseUrl não configurado.");
+
 ApiOptions apiOptions = new(
-    builder.Configuration["Api:BaseUrl"] ?? throw new InvalidOperationException("Api:BaseUrl não configurado."),
-    builder.Configuration["Api:Tenant"] ?? throw new InvalidOperationException("Api:Tenant não configurado."));
+    authBaseUrl,
+    builder.Configuration["Api:Tenant"] ?? throw new InvalidOperationException("Api:Tenant não configurado."))
+{
+    // Ausente, a API de negócio compartilha a base da autenticação — é o destino, e hoje a exceção.
+    ProductsBaseUrl = builder.Configuration["Api:ProductsBaseUrl"] ?? authBaseUrl
+};
 
 builder.Services.AddSingleton(apiOptions);
 
@@ -38,7 +45,21 @@ builder.Services.AddScoped(sp => new ApiHttpClient(
         BaseAddress = new Uri(apiOptions.BaseUrl)
     }));
 
+// Mesmo handler do cliente de auth, e de propósito: ele é quem põe o Bearer guardado no navegador, renova o
+// token vencido antes de enviar e repete a chamada uma vez no 401. Duplicar isso num handler só de produtos
+// duplicaria a parte mais delicada da sessão.
+builder.Services.AddScoped(sp => new ProductsApiClient(
+    new HttpClient(new AuthTokenHandler(sp.GetRequiredService<AuthSession>(), apiOptions)
+    {
+        InnerHandler = new HttpClientHandler()
+    })
+    {
+        BaseAddress = new Uri(apiOptions.ProductsBaseUrl)
+    }));
+
 builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddScoped<ProductsService>();
 
 // A política de admin lê o papel pelo indexador, como o resto da configuração: Get<T>() depende de
 // reflexão e o publish do WASM roda com trimming. Vazio hoje = todo autenticado passa (AdminPolicy).

@@ -1,0 +1,76 @@
+<article class="product-card">
+    <div class="product-code d-flex align-items-center">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="24"
+             height="24"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2"
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             class="lucide lucide-package-icon lucide-package"
+             aria-hidden="true">
+            <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+            <path d="M12 22V12" />
+            <path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7" />
+            <path d="m7.5 4.27 9 5.15" />
+        </svg>
+
+        <div class="product-code-text">
+            <span class="product-code-label">Código</span>
+            <span class="product-code-value">@Product.Code</span>
+        </div>
+    </div>
+
+    <h2 class="product-title">@Product.Name</h2>
+    <p class="product-state">Estado atual: @ProductLabels.State(Product.ProductState)</p>
+
+    <div class="product-badges">
+        <span class="product-badge product-badge-primary">@Product.Category.Name</span>
+
+        @if (!string.IsNullOrWhiteSpace(Product.Conditioning))
+        {
+            <span class="product-badge product-badge-secondary">@ProductLabels.Conditioning(Product.Conditioning)</span>
+        }
+
+        @if (Product.IsPending)
+        {
+            <span class="product-badge product-badge-warning">Pendente</span>
+        }
+    </div>
+
+    <div class="product-footer d-flex align-items-center justify-content-between">
+        <span class="product-info">Validade: @Product.ShelfLifeText</span>
+
+        @if (!string.IsNullOrWhiteSpace(Product.BrandOrSupplier))
+        {
+            <span class="product-info">@Product.BrandOrSupplier</span>
+        }
+    </div>
+
+    <div class="product-actions">
+        <button type="button"
+                class="product-action btn btn-lg d-flex align-items-center justify-content-center"
+                @onclick="OnDetails">
+            Detalhes
+        </button>
+    </div>
+</article>
+
+@code {
+    /// <summary>Produto exibido no card.</summary>
+    /// <remarks>
+    /// O topo mostra o <b>código</b>, e não quem cadastrou como no <c>LabelCard</c>: <c>user.name</c> é o
+    /// mesmo nos 69 produtos da amostra, enquanto o código é o que distingue <c>MM001</c> de <c>MM002</c> —
+    /// dois produtos de mesmo nome, separados só pelo estado. O responsável vai para os detalhes.
+    /// </remarks>
+    [Parameter, EditorRequired]
+    public required ProductsService.Product Product { get; set; }
+
+    /// <summary>
+    ///  Disparado quando o usuário abre os detalhes do produto.
+    ///  </summary>
+    [Parameter]
+    public EventCallback OnDetails { get; set; }
+}

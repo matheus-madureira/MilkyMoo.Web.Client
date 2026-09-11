@@ -1,12 +1,195 @@
-﻿@page "/produtos"
+@page "/produtos"
 @attribute [Authorize]
+@inject ProductsService Catalog
 
 <PageTitle>Produtos Milky Moo</PageTitle>
 
-<h1 class="page-title">
-    PRODUTOS E RECEBIMENTOS
-</h1>
+<div class="products-page">
+    <header class="products-header">
+        <div class="products-heading">
+            <h1 class="page-title">PRODUTOS E RECEBIMENTOS</h1>
+            <p class="page-description">Cadastrados (@_visible.Count)</p>
+        </div>
 
-<p class="page-description">
-    Gerencie os produtos e recebimentos da sua unidade de forma eficiente e prática.
-</p>
+        <select class="products-page-size"
+                aria-label="Quantidade de produtos exibidos"
+                @bind="_pageSize"
+                @bind:after="ApplyFilters">
+            @foreach (int size in PageSizes)
+            {
+                <option value="@size">@size itens</option>
+            }
+        </select>
+    </header>
+
+    <div class="products-search">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             width="18"
+             height="18"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2"
+             stroke-linecap="round"
+             stroke-linejoin="round"
+             class="products-search-icon lucide lucide-search-icon lucide-search"
+             aria-hidden="true">
+            <path d="m21 21-4.34-4.34" />
+            <circle cx="11" cy="11" r="8" />
+        </svg>
+
+        <input type="search"
+               class="products-search-input"
+               placeholder="Buscar por nome ou código"
+               aria-label="Buscar produto por nome ou código"
+               @bind="Search"
+               @bind:event="oninput" />
+    </div>
+
+    <div class="products-body">
+        <ProductFilters Products="_all ?? []"
+                        State="_filters"
+                        OnChanged="OnFiltersChanged" />
+
+        <div class="products-scroll">
+            @if (_error is not null)
+            {
+                <div class="products-error" role="alert">
+                    <p class="products-error-text">@_error</p>
+
+                    <button type="button" class="products-retry btn" @onclick="LoadAsync">
+                        Tentar novamente
+                    </button>
+                </div>
+            }
+            else if (_all is null)
+            {
+                <p class="products-empty">Carregando produtos...</p>
+            }
+            else if (_all.Count == 0)
+            {
+                <p class="products-empty">Nenhum produto cadastrado nesta unidade.</p>
+            }
+            else if (_visible.Count == 0)
+            {
+                <p class="products-empty">Nenhum produto encontrado para os filtros selecionados.</p>
+            }
+            else
+            {
+                <div class="products-grid">
+                    @foreach (ProductsService.Product product in _visible)
+                    {
+                        <ProductCard @key="product.Id"
+                                     Product="product"
+                                     OnDetails="() => OpenDetails(product)" />
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<Sheet @bind-Open="_isDetailsOpen"
+       Title="Detalhes do produto"
+       Side="Sheet.SheetSide.Right">
+    @if (_selected is not null)
+    {
+        <ProductDetails Product="_selected" />
+    }
+</Sheet>
+
+    @code {
+    private static readonly int[] PageSizes = [10, 20, 50, 100];
+
+    private IReadOnlyList<ProductsService.Product>? _all;
+    private IReadOnlyList<ProductsService.Product> _visible = [];
+    private ProductFilters.ProductFilterState _filters = ProductFilters.ProductFilterState.Empty;
+    private string? _error;
+    private int _pageSize = 20;
+
+    private ProductsService.Product? _selected;
+    private bool _isDetailsOpen;
+
+    /// <summary>
+    /// Termo buscado. Mora no estado dos filtros para que "Limpar tudo" também o apague.
+    /// </summary>
+    private string Search
+    {
+        get => _filters.Search;
+        set
+        {
+            _filters = _filters with { Search = value };
+            ApplyFilters();
+        }
+    }
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _all = null;
+        _error = null;
+
+        ProductsService.ProductsResult result = await Catalog.GetAllAsync();
+
+        _error = result.Error;
+        _all = result.Error is null ? result.Products : [];
+
+        ApplyFilters();
+    }
+
+    /// <summary>
+    /// O produto selecionado não é limpo ao fechar: manter o conteúdo evita o painel piscar vazio durante a
+    /// animação de saída.
+    /// </summary>
+    private void OpenDetails(ProductsService.Product product)
+    {
+        _selected = product;
+        _isDetailsOpen = true;
+    }
+
+    private void OnFiltersChanged(ProductFilters.ProductFilterState filters)
+    {
+        _filters = filters;
+        ApplyFilters();
+    }
+
+    /// <summary>
+    ///  Aplica filtros e busca, agrupa por categoria e limita a quantidade exibida.
+    ///  </summary>
+    private void ApplyFilters()
+    {
+        if (_all is null)
+        {
+            _visible = [];
+            return;
+        }
+
+        IEnumerable<ProductsService.Product> products = _all.Where(product => product.IsActive);
+
+        products = Restrict(products, _filters.Categories, product => product.Category.Name);
+        products = Restrict(products, _filters.States, product => ProductFilters.Key(product.ProductState));
+        products = Restrict(products, _filters.Conditionings, product => ProductFilters.Key(product.Conditioning));
+        products = Restrict(products, _filters.ShelfLifeTypes, product => ProductFilters.Key(product.ShelfLifeType));
+
+        if (_filters.Search.Trim() is { Length: > 0 } term)
+        {
+            products = products.Where(product => product.Matches(term));
+        }
+
+        _visible = products
+            .OrderBy(product => product.Category.Name, StringComparer.CurrentCultureIgnoreCase)
+            .ThenBy(product => product.Code, StringComparer.Ordinal)
+            .Take(_pageSize)
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Seleção vazia significa "todos", então o filtro só entra quando há algo marcado.
+    /// </summary>
+    private static IEnumerable<ProductsService.Product> Restrict(
+        IEnumerable<ProductsService.Product> products,
+        IReadOnlySet<string> selected,
+        Func<ProductsService.Product, string> selector) =>
+        selected.Count == 0 ? products : products.Where(product => selected.Contains(selector(product)));
+}
